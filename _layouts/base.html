@@ -23,15 +23,13 @@
     {% endif %}
     <meta property="og:image" content="{{ site.url }}/images/{{ site.inc.logo }}"/>
     {% endif %}
-    {% if page.excerpt %}
-    <meta property="og:description" content="{{ page.excerpt }}"/>
-    <meta name="description" content="{{ page.excerpt }}"/>
-    {% endif %}
+
+
+
     <meta property="og:site_name" content="{{ site.inc.title }}">
 
 </head>
 <body>
-
 <section class="site-nav">
     <header>
         <nav id="navigation">
@@ -59,8 +57,8 @@
         <nav>
             <a href="{{ site.inc.url }}">{{ site.inc.company }}</a> &middot;
             <a href="/">Blog</a> &middot;
-            {% if site.inc.product_link %}<a href="{{ site.inc.product_link }}">Product</a> &middot; {% endif %}
-            {% if site.inc.about_link %}<a href="{{ site.inc.about_link }}">Eclipse Open IoT Challenge</a>{% endif %}
+            {% if site.inc.about_link %}<a href="{{ site.inc.about_link }}">Eclipse Open IoT Challenge</a> &middot;{% endif %}
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
         </nav>
 
         <nav class="social">

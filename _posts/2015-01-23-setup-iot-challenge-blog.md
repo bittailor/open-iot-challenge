@@ -5,7 +5,7 @@ title: Getting ready for the IoT challenge
 subtitle: "let´s get ready to rumble"
 cover_image: blog-cover-1.png
 
-excerpt: "Getting everything in place to blog about my Eclipse IoT Challenge project"
+excerpt: "Getting everything in place to blog about my Eclipse Open IoT Challenge project"
 
 author:
   name: BITtailor
