@@ -84,4 +84,4 @@ The wireless sensor area network will be built based on the [nRF24L01+][nRF24] u
 + ...
 
 
-> enough about ideas ... let's go to work
+> enough about ideas ... let's go to work and have FUN
