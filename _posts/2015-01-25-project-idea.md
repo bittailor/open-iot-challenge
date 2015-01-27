@@ -34,7 +34,7 @@ The plan is to create [Arduino][Arduino] based sensor and actor nodes that use [
 
 ## Outlook
 
-We got nice new snow today
+We got new snow today
 
 ![SnowToday](/images/snow-today.jpg)
 
