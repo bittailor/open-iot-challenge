@@ -58,7 +58,7 @@ The gateway will be built with a [Raspberry Pi][RPi]. It will use a [nRF24L01+][
   + Create further API's.
 
 ## <a name="SensorAreaNetwork"></a>The wireless sensor area network
-The wireless sensor area network will be built based on the [nRF24L01+][nRF24] ultra low power 2.4GHz transceivers. I will use them since the are very popular in the maker area, very inexpensive and [widely available](http://www.ebay.com/sch/i.html?_nkw=NRF24L01%2B). The transiver provides a link layer that features automatic packet assembly and timing, automatic acknowledgement and retransmissions of packets. On top of this a simple tree based sensor area network layer will be implemented on the sensor and actor nodes and on the gateway node. No fragmentation and reassembly will be implemented in the sensor area network layers, therefore the maximum packet size is restricted and so is the the maximum length of a [MQTT-SN][MQTT-SN] message.
+The wireless sensor area network will be built based on the [nRF24L01+][nRF24] ultra low power 2.4GHz transceivers. I will use them since the are very popular in the maker area, very inexpensive and [widely available](http://www.ebay.com/sch/i.html?_nkw=NRF24L01%2B). The transceiver provides a link layer that features automatic packet assembly and timing, automatic acknowledgement and retransmissions of packets. On top of this a simple tree based sensor area network layer will be implemented on the sensor and actor nodes and on the gateway node. No fragmentation and reassembly will be implemented in the sensor area network layers, therefore the maximum packet size is restricted and so is the the maximum length of a [MQTT-SN][MQTT-SN] message.
 
 ## Recap
 
