@@ -52,7 +52,7 @@ timezone:    nil
 future:      false
 show_drafts: nil
 limit_posts: 0
-pygments:    true
+highlighter: rouge
 
 relative_permalinks: true
 
@@ -86,6 +86,7 @@ redcarpet:
   extensions: []
 
 kramdown:
+  input: GFM
   auto_ids: true
   footnote_nr: 1
   entity_output: as_char
