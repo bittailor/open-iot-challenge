@@ -90,7 +90,8 @@ a {
 
 .blog-cover {
     @extend .article-cover;
-    height: 320px;
+    height: 800px;
+    max-height:800px;
     background-color:#111;
     background-size:cover;
     background-position:center center;
@@ -103,7 +104,7 @@ a {
         right: 0;
         top: 0;
         bottom:0;
-        background-color:rgba(0,0,0,0.4);
+        background-color:rgba(0,0,0,0.5);
         background-image: linear-gradient(bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%);
         background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%);
         background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 100%);
@@ -114,7 +115,7 @@ a {
         	linear,
         	left bottom,
         	left top,
-        	color-stop(0, rgba(0,0,0,0.15)),
+        	color-stop(0, rgba(0,0,0,0.50)),
         	color-stop(1, rgba(0,0,0,0))
         );
         padding: 100px 0;
@@ -160,6 +161,28 @@ a {
         font-weight:600;
     }
 
+}
+
+.edition {
+    h2 {
+        font-size:2.0em;
+        line-height:1.4em;
+        margin:0;
+    }
+    
+     h2, h3 {
+        margin:0;
+        font-weight:600;
+    }
+
+    h3 {
+        font-size:1.0em;
+        margin-left:1.0em;   
+        margin-bottom:2.0em;       
+    } 
+    
+   
+       
 }
 
 .pagination {
@@ -278,4 +301,30 @@ a {
 
 .more {
   margin-top: -1.5em;
+}
+
+.bt-front {
+    body {
+      background: url(../images/workspace_1.jpg) no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+      background-color:rgba(0,0,0,0.5);
+      color: white;
+    }
+    
+    h1 {
+      color: white;
+      text-align: center;    
+    }
+       
+}
+
+.bt-centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  transform: translate(-50%, -50%);
 }

@@ -1,6 +1,8 @@
 ---
 layout: post
 
+edition: first
+
 title: Getting ready for the IoT challenge
 subtitle: "let´s get ready to rumble"
 cover_image: blog-cover-1.png

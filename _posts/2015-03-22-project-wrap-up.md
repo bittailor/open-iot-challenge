@@ -1,6 +1,8 @@
 ---
 layout: post
 
+edition: first
+
 title: Project Wrap-Up
 subtitle: Creating a maker friendly DIY IoT home automation solution
 

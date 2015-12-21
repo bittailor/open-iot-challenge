@@ -1,6 +1,8 @@
 ---
 layout: post
 
+edition: first
+
 title: My first steps with Eclipse Kura
 subtitle: Creating a maker friendly DIY IoT home automation solution
 

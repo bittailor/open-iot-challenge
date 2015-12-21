@@ -1,6 +1,8 @@
 ---
 layout: post
 
+edition: first
+
 title: Adventures in Tycho
 subtitle: Creating a maker friendly DIY IoT home automation solution
 

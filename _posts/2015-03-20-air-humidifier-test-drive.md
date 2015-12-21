@@ -1,6 +1,8 @@
 ---
 layout: post
 
+edition: first
+
 title: IoT air humidifier test drive
 subtitle: Creating a maker friendly DIY IoT home automation solution
 

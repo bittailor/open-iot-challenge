@@ -1,8 +1,7 @@
 inc:
   # Blog Information
   title:        "BITtailor @ Eclipse Open IoT Challenge"
-  subtitle:     "Creating a maker friendly DIY IoT home automation solution"
-  cover_image:  blog-cover.jpg
+  cover_image:  workspace.jpg
   logo:         logo.jpg
 
   # Company information

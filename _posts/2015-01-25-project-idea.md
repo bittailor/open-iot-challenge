@@ -1,6 +1,8 @@
 ---
 layout: post
 
+edition: first
+
 title: My project idea for the Eclipse Open IoT Challenge
 subtitle: Creating a maker friendly DIY IoT home automation solution
 
