@@ -1,0 +1,46 @@
+.bt-front {
+    body {
+      background: url(../images/workspace_1.jpg) no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+      background-color:rgba(0,0,0,0.5);
+      color: white;
+      padding-top: 2em;
+      @media (max-height: 480px) {
+        padding-top: 1em;
+      } 
+    }
+    
+    h1 {
+      color: white;
+      text-align: center;
+      font-family: 'Ubuntu', sans-serif;
+      font-weight: bold;
+      line-height: 1.3em; 
+      text-shadow: 0.1em  0.1em 0.5em black , 
+                  -0.1em -0.1em 0.5em black ,
+                   0.1em -0.1em 0.5em black ,
+                  -0.1em  0.1em 0.5em black ;      
+    }
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 20px;
+        }
+    }
+    
+    a {
+        color: white;
+    }
+    
+    a:hover {
+        text-decoration: none;
+    }
+    
+    .img-thumbnail {
+      margin: 10px;
+      max-width: 95%;   
+    }
+       
+}

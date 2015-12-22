@@ -35,9 +35,9 @@ This is the final wrap-up post for my [Eclipse Open IoT Challenge][OpenIoT] proj
 
 So as a proof of concept for my maker friendly DIY IoT home automation solution I built a simple *IoT air humidifier*:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/9De5VZFZXVg" frameborder="0" allowfullscreen></iframe>
-
 <!-- more -->
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/9De5VZFZXVg" frameborder="0" allowfullscreen></iframe>
 
 ## Overview
 

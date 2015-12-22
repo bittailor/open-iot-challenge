@@ -90,8 +90,7 @@ a {
 
 .blog-cover {
     @extend .article-cover;
-    height: 800px;
-    max-height:800px;
+    height: 320px;
     background-color:#111;
     background-size:cover;
     background-position:center center;
@@ -312,11 +311,30 @@ a {
       background-size: cover;
       background-color:rgba(0,0,0,0.5);
       color: white;
+      @media (max-height: 480px) {
+        padding-top: 0px;
+      } 
     }
     
     h1 {
       color: white;
-      text-align: center;    
+      text-align: center;
+      font-family: 'Ubuntu', sans-serif;
+      font-weight: bold; 
+      text-shadow: 0.1em  0.1em 0.5em black , 
+                  -0.1em -0.1em 0.5em black ,
+                   0.1em -0.1em 0.5em black ,
+                  -0.1em  0.1em 0.5em black ;      
+    }
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 24px;
+        }
+    }
+    
+    
+    .img-thumbnail {
+      margin: 10px;    
     }
        
 }
