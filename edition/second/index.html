@@ -3,13 +3,13 @@ layout: base
 ---
 <article class="container">
 {% assign edition = site.data.editions['second'] %}
-{% assign firsts = site.posts | where:"edition","second" %}
+{% assign posts = site.posts | where:"edition","second" %}
   <section class="edition">
     <img src="../../images/eiot2.png">  
     <a name="{{ group.name }}"></a><h2>{{ edition.title}}</h2>
     <h3>{{ edition.subtitle }}</h3>
   </section>
-  {% for post in firsts %}
+  {% for post in posts %}
     {% unless post.draft %}
       <section class="index">
           <div>
