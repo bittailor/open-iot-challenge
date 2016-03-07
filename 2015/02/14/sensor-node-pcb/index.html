@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <title>Sensor Node PCB &mdash; BITtailor @ Eclipse Open IoT Challenge</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="stylesheet" href="/assets/prism.css">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/images/logo.jpg"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="BITtailor @ Eclipse Open IoT Challenge" />
+    <meta name="title" content="Sensor Node PCB ">
+    <link rel="canonical" href="http://incorporated.sendtoinc.com/2015/02/14/sensor-node-pcb/">
+    
+    
+    <meta property="og:title" content="Sensor Node PCB "/>
+    <meta property="og:url" content="http://incorporated.sendtoinc.com/2015/02/14/sensor-node-pcb/"/>
+    
+
+
+
+    <meta property="og:site_name" content="BITtailor @ Eclipse Open IoT Challenge">
+
+</head>
+<body>
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+              <i class="fa fa-home fa-2x"></i>  <i class="fa fa-plug fa-rotate-45"></i> <i class="fa fa-cloud fa-2x"></i>
+              <!-- <img src="/images/logo.jpg" alt="Inc"> -->
+            </a>
+            <a href="/edition/second/">2.0</a>
+            <a href="/edition/first">1.0</a>
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="BITtailor" target="_blank">BITtailor</a></address> &mdash;
+                <time pubdate datetime="2015-14-February" title="February 14, 2015">February 14, 2015</time>
+            </div>
+            <h1 class="title">Sensor Node PCB</h1>
+            <h2 class="subtitle">Creating a maker friendly DIY IoT home automation solution</h2>
+        </header>
+
+        <section>
+            
+<p>Before starting with the <em>soft</em> parts, I had to tackle the PCB design of the sensor nodes. This since my favorite PCB manufacturer was just about to close for Chinese New Year. I had to place the order before February 7, so that they get manufactured and shipped before the holiday. This week I just received an update:</p>
+
+<blockquote>
+  <p>Your order has been updated to the following status:<br />
+<em>Shipped</em></p>
+
+  <p><small> 12.Feb - <a href="http://smart-prototyping.com">Smart-Prototyping</a></small></p>
+</blockquote>
+
+<p><i class="fa fa-thumbs-o-up"></i> My sensor nodes PCB’s are on their way.</p>
+
+<!-- more -->
+
+<p>Since I was kind of in a hurry, I used auto routing and did not do a lot of checking before ordering them. Let’s hope they work and that they do not contain too many mistakes that couldn’t be fixed by some extra wiring. Here are the top and bottom views:</p>
+
+<p>Top:<br />
+<img src="/images/SensorNodeTop.png" alt="SensorNodeTop" /><br />
+Bottom:<br />
+<img src="/images/SensorNodeBottom.png" alt="SensorNodeBottom" /></p>
+
+<p>The sensor nodes PCB connects:</p>
+
+<ul>
+  <li>the <a href="http://www.atmel.com/devices/atmega328p.aspx">ATmega328</a> with the 8MHz crystal oscillator</li>
+  <li>the <a href="https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P">nRF24L01+</a> transceiver module</li>
+  <li>a <a href="http://www.adafruit.com/product/385">DHT22</a> temperature and humidity sensor</li>
+  <li>a <a href="https://www.adafruit.com/product/391">BMP085</a> barometric pressure and altitude sensor</li>
+  <li>a <a href="http://www.mouser.com/ds/2/215/2468-285365.pdf">battery holder</a> for 2 AAA batteries</li>
+  <li>a <a href="https://www.sparkfun.com/products/10967">NCP1402</a> 3.3V Step-Up power converter</li>
+  <li>and a simple voltage divider to monitor the battery level</li>
+</ul>
+
+<p>I will publish the design after I verified (and probably correted) it with the first batch of PCB’s.</p>
+
+<p>So now I move on to the <em>soft</em> parts.</p>
+
+            
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/bittailor_ch" title="" target="_blank">BITtailor</a></strong><br>
+                <span class="muted">passion for the bits and bytes</span>
+                </p>
+            </address>
+
+        </footer>
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'bittailoriotchallenge'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2016
+
+        <nav>
+            <a href="http://bittailor.ch/">BITtailor</a> &middot;
+            <a href="/">Blog</a> &middot;
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+
+        <nav class="social">
+            
+            <a href="https://twitter.com/bittailor_ch" title="Follow on Twitter" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            
+            <a href="http://github.com/bittailor" title="Fork on Github" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            <a href="/feed.xml" title="RSS Feed">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x"></i>
+              </span>
+            </a>
+
+        </nav>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+</body>
+</html>

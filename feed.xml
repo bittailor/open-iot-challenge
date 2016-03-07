@@ -1,0 +1,815 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title></title>
+    <link>http://incorporated.sendtoinc.com</link>
+    <atom:link href="http://incorporated.sendtoinc.com/feed.xml" rel="self" type="application/rss+xml" />
+    <description></description>
+    <language>en-us</language>
+    <pubDate>Mon, 07 Mar 2016 09:00:08 +0000</pubDate>
+    <lastBuildDate>Mon, 07 Mar 2016 09:00:08 +0000</lastBuildDate>
+
+    
+    
+    <item>
+      <title>Project Wrap-Up</title>
+      <link>http://incorporated.sendtoinc.com/2016/02/26/oiot2-project-wrap-up/</link>
+      <pubDate>Fri, 26 Feb 2016 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2016/02/26/oiot2-project-wrap-up</guid>
+      <description>
+&lt;p&gt;This is the final wrap-up post for my &lt;a href=&quot;http://iot.eclipse.org/open-iot-challenge&quot;&gt;Eclipse Open IoT Challenge 2.0&lt;/a&gt; project. It will not be the last post about my Solar Monitor since I unfortunately was not able to completely finish my project till the end of the challenge. I’m still waiting for my PCB’s to arrive and also need to finish some software parts. But let’s start from the beginning …&lt;/p&gt;
+
+&lt;!-- more --&gt;
+&lt;p&gt;&lt;a href=&quot;/2015/12/22/iot-challenge-2-0/&quot;&gt;The idea&lt;/a&gt; was to add extra sensors and connectivity to the off-grid solar power system of a mountain hut to gain more insides into the generated and used energy.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/oiot2-idea-2.png&quot; alt=&quot;off-grid solar power system&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So as explained in the &lt;a href=&quot;/2016/01/14/oiot2-first-steps/&quot;&gt;first steps&lt;/a&gt; post I started with boards and shields from my tinkering box and was able to setup a MQTT connection with the Paho client library. After the first steps a saw some issues with the Arduino UNO board and the GPRS Shield as explained in &lt;a href=&quot;/2016/01/30/oiot2-conclusions-after-first-steps/&quot;&gt;Conclusions after my first steps&lt;/a&gt;. So I used my Adafruit voucher and ordered an &lt;a href=&quot;https://www.adafruit.com/products/2772&quot;&gt;Adafruit Feather M0&lt;/a&gt; as main MCU and an &lt;a href=&quot;https://www.adafruit.com/product/1946&quot;&gt;Adafruit FONA&lt;/a&gt; for GPRS. &lt;a href=&quot;https://www.adafruit.com/product/1946&quot;&gt;Adafruit FONA&lt;/a&gt; provides an nice &lt;a href=&quot;https://github.com/adafruit/Adafruit_FONA&quot;&gt;library with GPRS support&lt;/a&gt; and Adafruit also provides compatible &lt;a href=&quot;https://github.com/adafruit/Adafruit_MQTT_Library&quot;&gt;MQTT library&lt;/a&gt;. But since this an eclipse challenge I implemented the &lt;em&gt;&lt;a href=&quot;https://github.com/bittailor/BtSolarMonitor/blob/master/Firmware/libraries/Bt_PahoWithFona_Library/src/Bt_PahoWithFona.h&quot;&gt;PAHO Network Adapter&lt;/a&gt;&lt;/em&gt; for the FONA GPRS library and with this was able to use the Paho client library.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-c&quot;&gt;Adafruit_FONA sFona(FONA_RST);
+Bt_PahoNetworkFona sNetwork(sFona);
+MQTT::Client&amp;lt;Bt_PahoNetworkFona, Bt_PahoTimer, 500, 1&amp;gt; sMqttClient(sNetwork);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After having prototyped the MQTT connection I also prototyped the dispay and the current sensor. So my protoboard looked like this:&lt;br /&gt;
+&lt;img src=&quot;/images/proto_2.jpg&quot; alt=&quot;proto_2.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I then started to create the schematic and the board for my solar monitor PBC’s. I had to learn, one time more, that &lt;strong&gt;Hardware is Hard&lt;/strong&gt;, at least for me how has an electrical engineering background, but is &lt;em&gt;only&lt;/em&gt; doing software on the job for over 10 years. So I spent hours with detours on how to design the drivers so that I can drive the relays from a MCU pin and then some more hours to actually select the part form the 100’s that do the same. It’s kind of like choosing your javascript library there seem to be hundreds that do the same. So I lost a lot of time and this is why my PCB are not here yet. But at least I have some nice pictures:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/SolarMonitorMainBoard.png&quot; alt=&quot;SolarMonitorMainBoard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The main board it contains&lt;br /&gt;
+ - 1 &lt;a href=&quot;https://www.adafruit.com/products/2772&quot;&gt;Adafruit Feather M0&lt;/a&gt; as main MCU&lt;br /&gt;
+ - 6 &lt;a href=&quot;http://www.ti.com/lit/ds/symlink/ina219.pdf&quot;&gt;INA219&lt;/a&gt; current sensors&lt;br /&gt;
+ - 3  bistable relays (because I decided to also switch the load not just measure)&lt;br /&gt;
+ - 1 &lt;a href=&quot;http://www.atmel.com/devices/atmega328p.aspx&quot;&gt;ATmega328P&lt;/a&gt; as slave MCU (because I run out of IO’s on the main MCU)&lt;br /&gt;
+ - 1 Darlington-Transistor-Arrays to drive the relays&lt;br /&gt;
+ - 1 5V voltage regulator&lt;/p&gt;
+
+&lt;p&gt;The main board is connected to a display board:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/SolarMonitorDisplayBoard.png&quot; alt=&quot;SolarMonitorDisplayBoard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The display board contains&lt;br /&gt;
+ - The &lt;a href=&quot;https://www.adafruit.com/product/1946&quot;&gt;Adafruit FONA&lt;/a&gt;&lt;br /&gt;
+ - 2 &lt;a href=&quot;https://www.adafruit.com/products/338&quot;&gt;Nokia 5110&lt;/a&gt; displays&lt;br /&gt;
+ - &lt;em&gt;spare&lt;/em&gt; connections for a barometric breakout and a temperature breakout&lt;/p&gt;
+
+&lt;p&gt;During the creation of the board I made some adoptions to my initial idea. Instead of just measuring I also included some actors. I decided that I would also like to be able to switch off the complete load and switch between the to batteries with the MCU and with this also from remote.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/eiot-2-overview-2.png&quot; alt=&quot;eiot-2-overview-2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;After I sent the Gerbers for the PCB’s to the PCB service I focused back to the software parts.&lt;/p&gt;
+
+&lt;p&gt;I used &lt;a href=&quot;https://io.adafruit.com&quot;&gt;Adafruit.io&lt;/a&gt; to create an online dashboard for my solar monitor.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/Dashboard.png&quot; alt=&quot;Dashboard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Since &lt;a href=&quot;https://io.adafruit.com&quot;&gt;Adafruit.io&lt;/a&gt; supports MQTT out of the box this was straight forward.&lt;/p&gt;
+
+&lt;p&gt;The time for the second Eclipse Open IoT Challenge is up but I will keep going and finish my Solar Monitor.&lt;/p&gt;
+
+&lt;p&gt;All the hardware and software parts can be found in &lt;a href=&quot;https://github.com/bittailor/BtSolarMonitor&quot;&gt;this GitHub repository&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Conclusions after my first steps</title>
+      <link>http://incorporated.sendtoinc.com/2016/01/30/oiot2-conclusions-after-first-steps/</link>
+      <pubDate>Sat, 30 Jan 2016 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2016/01/30/oiot2-conclusions-after-first-steps</guid>
+      <description>
+&lt;p&gt;So after my &lt;a href=&quot;/2016/01/14/oiot2-first-steps/&quot;&gt;first steps&lt;/a&gt; I draw some conclusions on how to continue …&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h3 id=&quot;gprs-connection&quot;&gt;GPRS connection&lt;/h3&gt;
+
+&lt;p&gt;For me programming against the AT command interface of the &lt;a href=&quot;http://www.seeedstudio.com/wiki/GPRS_Shield_V3.0&quot;&gt;GPRS Shield&lt;/a&gt; shield is difficult, I was able to implement a simple happy case for a TCP/IP connection but for a 24/7 unattended sensor device, that should just work, also catching all the other paths and particularly reconnecting after some issues is important. So I searched for libraries but did not find one that works well with my &lt;a href=&quot;http://www.seeedstudio.com/wiki/GPRS_Shield_V3.0&quot;&gt;GPRS Shield&lt;/a&gt;. Most of the libraries I found used pins like &lt;strong&gt;&lt;tt&gt;RESET&lt;/tt&gt;&lt;/strong&gt; or &lt;strong&gt;&lt;tt&gt;Status&lt;/tt&gt;&lt;/strong&gt; which are not accessible on my &lt;a href=&quot;http://www.seeedstudio.com/wiki/GPRS_Shield_V3.0&quot;&gt;GPRS Shield&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;i class=&quot;fa fa-arrow-right fa-2x&quot;&gt;&lt;/i&gt; I decided to look for an other GPRS breakout. I chose for an &lt;a href=&quot;https://www.adafruit.com/product/1946&quot;&gt;Adafruit FONA&lt;/a&gt; since this includes a library with TCP/IP support out of the box and provides a small footprint.&lt;/p&gt;
+
+&lt;h3 id=&quot;controller-mcu&quot;&gt;Controller MCU&lt;/h3&gt;
+
+&lt;p&gt;I started with an &lt;a href=&quot;https://www.arduino.cc/en/Main/ArduinoBoardUno&quot;&gt;Arduino UNO&lt;/a&gt;, which was perfect because I always have one of them in my tinkering box and Arduino provides you lots of libraries. But already after my first steps I see that the limited 2K SRAM of the &lt;a href=&quot;https://www.arduino.cc/en/Main/ArduinoBoardUno&quot;&gt;Arduino UNO&lt;/a&gt; could provide a challenge. Already my first sketch with GPRS, display and current sensor used 87% of the SRAM for global variables. So avoid to spend endless time with optimizing memory usage, I decided to look for an other controller MCU. &lt;/p&gt;
+
+&lt;p&gt;&lt;i class=&quot;fa fa-arrow-right fa-2x&quot;&gt;&lt;/i&gt; I decided to look for an other controller MCU to avoid to spend endless time with optimizing memory usage. I chose for and &lt;a href=&quot;https://www.adafruit.com/products/2772&quot;&gt;Adafruit Feather M0 Basic Proto&lt;/a&gt; which supports the Arduino ecosystem, uses like the &lt;a href=&quot;https://www.arduino.cc/en/Main/ArduinoBoardZero&quot;&gt;Arduino Zero&lt;/a&gt; an ATSAMD21G18 ARM Cortex M0 processor with 16x the SRAM (32K) of an UNO and provides a small footprint which will help to but everything into a enclosing.&lt;/p&gt;
+
+&lt;p&gt;So it was time to use my Adafruit gift certificate to get the parts to continue with the next steps of my project. And a little more that a week later I received a parcel:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/adafruit_1.jpg&quot; alt=&quot;Adafruit_1.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now my prototype for the solar monitor sensor device looks like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/proto_2.jpg&quot; alt=&quot;proto_2.jpg&quot; /&gt; &lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>The first steps</title>
+      <link>http://incorporated.sendtoinc.com/2016/01/14/oiot2-first-steps/</link>
+      <pubDate>Thu, 14 Jan 2016 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2016/01/14/oiot2-first-steps</guid>
+      <description>
+&lt;p&gt;In this post I explore my first steps for my project:&lt;br /&gt;
+ - GPRS connection&lt;br /&gt;
+ - MQTT over GPRS&lt;br /&gt;
+ - Current and Voltage sensing&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;&lt;strong&gt;GPRS connection and display&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The first thing I wanted to explore was the GPRS connection. I already had a &lt;a href=&quot;http://www.seeedstudio.com/wiki/GPRS_Shield_V3.0&quot;&gt;GPRS Shield&lt;/a&gt; from Seeed Studio in my tinkering box for quite a while, but I have not really used it yet. I combined it with an &lt;a href=&quot;https://www.arduino.cc/en/Main/ArduinoBoardUno&quot;&gt;Arduino UNO&lt;/a&gt; and a &lt;a href=&quot;https://www.adafruit.com/products/338&quot;&gt;Nokia 5110&lt;/a&gt; display to start the exploration.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/uno_gprs_5110_v1.jpg&quot; alt=&quot;uno_gprs_5110_v1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;After some try and errors with the AT commands modem interface of the GPRS Shield my &lt;a href=&quot;https://gist.github.com/bittailor/3301175cacad32da154c&quot;&gt;first sketch&lt;/a&gt; connects to Cellular GSM network and displays the signal strength (RSSI).&lt;/p&gt;
+
+&lt;p&gt;So I packed everything in my backpack, and since there is nearly no snow till now this winter, I just needed my hiking shoes to reach the hut and checked the signal strength at the huts solar control box.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/uno_gprs_5110_on_hut.jpg&quot; alt=&quot;uno_gprs_5110_v1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The display showed a strength of 9 (-95 dBm) to 10 (-93 dBm) which is just at the border from a &lt;em&gt;Marginal&lt;/em&gt; to a &lt;em&gt;OK&lt;/em&gt; Condition.  Therefore a data connection should work but maybe a another/better antenna could be useful.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;MQTT over GPRS&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;So back at my desk the next thing was to use MQTT to actually send some data over Cellular GSM network. I used the Paho &lt;a href=&quot;https://www.eclipse.org/paho/clients/c/embedded/&quot;&gt;Embedded MQTT C/C++ Client&lt;/a&gt; for Arduino, therefore I implemented a &lt;a href=&quot;https://gist.github.com/bittailor/fd6ab7e75a00221e0ade&quot;&gt;GPRSClient&lt;/a&gt; that extends the &lt;a href=&quot;https://www.arduino.cc/en/Reference/ClientConstructor&quot;&gt;Arduino Client Base class&lt;/a&gt; which represents the &lt;em&gt;Ethernet Interface&lt;/em&gt; for Arduino and is used by the Paho client library. &lt;a href=&quot;https://gist.github.com/bittailor/f97cbc529cc246d3bffe&quot;&gt;This Sketch&lt;/a&gt; uses the GPRSClient and the Paho client library to send some data to the Paho sandbox server.     &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/MqttOverGprs_1.jpg&quot; alt=&quot;MqttOverGprs_1.jpg&quot; /&gt; &lt;br /&gt;
+&lt;img src=&quot;/images/MqttOverGprs_2.jpg&quot; alt=&quot;MqttOverGprs_2.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Current and Voltage sensing&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Next thing is to measure a current and send it, instead of the timer value. I use a &lt;a href=&quot;https://www.adafruit.com/products/904&quot;&gt;INA219 High Side DC Current Sensor Breakout&lt;/a&gt; that can out of the box measure a current up to 3.2A and a Voltages up to 26V. This is fine for my first steps, where I just measure the current of the Arduino UNO and the GPRS Shield itself, but I will have to use another current sense resistor to extend the range up to 20A. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/current_sensor_1.jpg&quot; alt=&quot;current_sensor_1.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://gist.github.com/bittailor/d19deb070040851ac40d&quot;&gt;This Sketch&lt;/a&gt; uses the INA219 to measure the current roughly all 100ms and then publishes all 10s the average current. An we see that the Arduino UNO and the GPRS Shield use about 150mA when connected and about 180mA when it also has to receive some MQTT messages.  &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/current_sensor_2.jpg&quot; alt=&quot;current_sensor_2.jpg&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/images/current_sensor_3.jpg&quot; alt=&quot;current_sensor_3.jpg&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So after this first steps I draw some conclusions on how to continue. I will write about them in the next post.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Idea for the Open IoT Challenge 2.0</title>
+      <link>http://incorporated.sendtoinc.com/2015/12/22/iot-challenge-2-0/</link>
+      <pubDate>Tue, 22 Dec 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/12/22/iot-challenge-2-0</guid>
+      <description>&lt;p&gt;In short the idea is to add extra sensors and connectivity to the off-grid solar power system of a mountain hut to gain more insides into the generated and used energy. &lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;I’m member of a club that operates a small climbers hut in the mountains. The hut has a small off-grid solar power system that generates the electricity used to provide light in the hut. Lately we had some issues that the energy generated during the week, did not last for the whole weekend the hut is operated. So we replaced the already old charge controller with a new charge controller with Maximum Power Point Tracking. The new charge controller just provides some 5 LEDs show operating states but no details about the generated or used energy.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/oiot2-idea-1.png&quot; alt=&quot;off-grid solar power system&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;em&gt;IoT-ing&lt;/em&gt; idea is to add current and voltage sensors, a microcontroller with a display and GPRS module to show the energy information locally and to store it to the cloud for history and further analysis. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/oiot2-idea-2.png&quot; alt=&quot;off-grid solar power system&quot; /&gt;&lt;/p&gt;
+
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Project Wrap-Up</title>
+      <link>http://incorporated.sendtoinc.com/2015/03/22/project-wrap-up/</link>
+      <pubDate>Sun, 22 Mar 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/03/22/project-wrap-up</guid>
+      <description>
+&lt;p&gt;This is the final wrap-up post for my &lt;a href=&quot;http://iot.eclipse.org/open-iot-challenge/&quot;&gt;Eclipse Open IoT Challenge&lt;/a&gt; project. I set out to build a maker friendly DIY IoT home automation solution, driven by my dissatisfaction with the humidifier control plugs I owned.&lt;/p&gt;
+
+&lt;p&gt;So as a proof of concept for my maker friendly DIY IoT home automation solution I built a simple &lt;em&gt;IoT air humidifier&lt;/em&gt;:&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/9De5VZFZXVg&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/IoTOverviewSolution.png&quot; alt=&quot;IoTOverviewSolution&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This shows the overview of what I built which is nearly the same picture as in my &lt;a href=&quot;/2015/01/25/project-idea/&quot;&gt;project idea post&lt;/a&gt;. I did not manage to build and setup everything I had in mind. Due to lack of time I skipped the connection to the various cloud services but I think it is simple to set them up trough configuring bridges on the &lt;a href=&quot;http://mosquitto.org/&quot;&gt;Mosquitto&lt;/a&gt; broker or creating some forwarding flows in &lt;a href=&quot;http://nodered.org/&quot;&gt;Node-RED&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;All the source code for my project can be found on &lt;a href=&quot;https://github.com/bittailor/BtIot&quot;&gt;&lt;i class=&quot;fa fa-github fa-2x&quot;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;But now to the details of what I built:&lt;/p&gt;
+
+&lt;h2 id=&quot;the-sensor-node&quot;&gt;The sensor node&lt;/h2&gt;
+
+&lt;h3 id=&quot;hardware&quot;&gt;Hardware&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/SensorNodeFront.png&quot; alt=&quot;SensorNodeFront&quot; /&gt; &lt;img src=&quot;/images/SensorNodeRear.png&quot; alt=&quot;SensorNodeRear&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;For the sensor node I created its own PCB that connects:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the &lt;a href=&quot;http://www.atmel.com/devices/atmega328p.aspx&quot;&gt;ATmega328&lt;/a&gt; with the 8MHz crystal oscillator&lt;/li&gt;
+  &lt;li&gt;the &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; transceiver module&lt;/li&gt;
+  &lt;li&gt;a &lt;a href=&quot;http://www.adafruit.com/product/385&quot;&gt;DHT22&lt;/a&gt; temperature and humidity sensor&lt;/li&gt;
+  &lt;li&gt;a &lt;a href=&quot;https://www.adafruit.com/product/391&quot;&gt;BMP085&lt;/a&gt; barometric pressure and altitude sensor&lt;/li&gt;
+  &lt;li&gt;a &lt;a href=&quot;http://www.mouser.com/ds/2/215/2468-285365.pdf&quot;&gt;battery holder&lt;/a&gt; for 2 AAA batteries&lt;/li&gt;
+  &lt;li&gt;a &lt;a href=&quot;https://www.sparkfun.com/products/10967&quot;&gt;NCP1402&lt;/a&gt; 3.3V Step-Up power converter&lt;/li&gt;
+  &lt;li&gt;and a simple voltage divider to monitor the battery level&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;software&quot;&gt;Software&lt;/h3&gt;
+&lt;p&gt;The sensor node software is built with the &lt;a href=&quot;http://arduino.cc/&quot;&gt;Arduino&lt;/a&gt; programming platform. Besides the Arduino UNO core it uses the following libarries:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://playground.arduino.cc//Main/DHTLib&quot;&gt;DHTLib&lt;/a&gt;  to read the &lt;a href=&quot;http://www.adafruit.com/product/385&quot;&gt;DHT22&lt;/a&gt; temperature and humidity sensor.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.rocketscream.com/blog/2011/07/04/lightweight-low-power-arduino-library/&quot;&gt;uA&lt;/a&gt; a low power library for Arduino to enable sleeping on the sensor node.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bittailor/BtMqttSn#btmqttsn&quot;&gt;BtMqttSn&lt;/a&gt; my library for a MQTT-SN client communicating over a nRF24L01+ Transceiver.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The code of the sensor node is &lt;a href=&quot;https://github.com/bittailor/BtIot/blob/master/MqttSnSensorsNode/MqttSnSensorsNode.ino&quot;&gt;here&lt;/a&gt;. It publishes regularly the temperature and humidity with &lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot;&gt;MQTT-SN&lt;/a&gt; over the wireless sensor network.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-actor-node&quot;&gt;The actor node&lt;/h2&gt;
+
+&lt;h3 id=&quot;hardware-1&quot;&gt;Hardware&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/ActorNode.png&quot; alt=&quot;ActorNode&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The actor node is currently just built as a prototype using a relay connected to an &lt;a href=&quot;http://arduino.cc/en/Main/ArduinoBoardUno&quot;&gt;Arduino Uno&lt;/a&gt; board to switch a power line. The &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; is used to communicate over the wireless sensor network.&lt;/p&gt;
+
+&lt;h3 id=&quot;software-1&quot;&gt;Software&lt;/h3&gt;
+
+&lt;p&gt;Also the sensor node software is built with the &lt;a href=&quot;http://arduino.cc/&quot;&gt;Arduino&lt;/a&gt; programming platform. The code of the actor node is &lt;a href=&quot;https://github.com/bittailor/BtIot/blob/master/MqttSnActorNode/MqttSnActorNode.ino&quot;&gt;here&lt;/a&gt;. It uses &lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot;&gt;MQTT-SN&lt;/a&gt; over the wireless sensor network to subscribes to a topic to control the relay.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-gateway&quot;&gt;The gateway&lt;/h2&gt;
+
+&lt;h3 id=&quot;hardware-2&quot;&gt;Hardware&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/GatewayImage.jpg&quot; alt=&quot;GatewayImage&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The gateway is built with a &lt;a href=&quot;http://www.raspberrypi.org/&quot;&gt;Raspberry Pi&lt;/a&gt;. The &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; transceiver module is connected trough SPI.&lt;/p&gt;
+
+&lt;h3 id=&quot;software-2&quot;&gt;Software&lt;/h3&gt;
+
+&lt;p&gt;There are three main services on the gateway:&lt;/p&gt;
+
+&lt;h4 id=&quot;the-mqtt-sn-gateway&quot;&gt;The MQTT-SN gateway&lt;/h4&gt;
+&lt;p&gt;This is the application I built with the &lt;a href=&quot;https://eclipse.org/kura/&quot;&gt;Kura&lt;/a&gt; framework. It &lt;em&gt;gateways&lt;/em&gt; the MQTT-SN messages of the wireless sensor network to MQTT messages forwarded to the MQTT broker. The gateway is made up of three OSGI bundles:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://github.com/bittailor/BtIot/tree/master/ch.bittailor.iot.core&quot;&gt;ch.bittailor.iot.core&lt;/a&gt;&lt;/strong&gt; Contains the implementation of the &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; based wireless sensor network and the MQTT-SN gateway using the wireless sensor network.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://github.com/bittailor/BtIot/tree/master/ch.bittailor.iot.wsn&quot;&gt;ch.bittailor.iot.wsn&lt;/a&gt;&lt;/strong&gt; Provides the wireless sensor network packet socket as OSGI service.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://github.com/bittailor/BtIot/tree/master/ch.bittailor.iot.mqttsn&quot;&gt;ch.bittailor.iot.mqttsn&lt;/a&gt;&lt;/strong&gt; Provides the MQTT-SN gateway as OSGI service.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I planned to build a transparent gateway but since the Kura &lt;a href=&quot;http://download.eclipse.org/kura/releases/1.1.0/docs/apidocs/org/eclipse/kura/cloud/CloudClient.html&quot;&gt;CloudClient&lt;/a&gt; already provides an aggregating MQTT service it is an aggregating gateway now.&lt;/p&gt;
+
+&lt;p&gt;The gateway currently supports:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Publish and subscribe with QoS 0.&lt;/li&gt;
+  &lt;li&gt;Sleeping clients.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It does not yet provide:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;QoS 1 und QoS 2.&lt;/li&gt;
+  &lt;li&gt;The search gateway feature, since the wireless sensor network does not yet provide a broadcasting.&lt;/li&gt;
+  &lt;li&gt;The last will feature.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Furhter the wireless sensor network limits the maximum length of a MQTT-SN message to 29 octets.&lt;/p&gt;
+
+&lt;h4 id=&quot;the-mqtt-broker&quot;&gt;The MQTT broker&lt;/h4&gt;
+&lt;p&gt;Here I just installed the &lt;a href=&quot;http://mosquitto.org/&quot;&gt;Mosquitto&lt;/a&gt; broker.&lt;/p&gt;
+
+&lt;h4 id=&quot;node-red&quot;&gt;Node-RED&lt;/h4&gt;
+&lt;p&gt;Installed node.js on the &lt;a href=&quot;http://www.raspberrypi.org/&quot;&gt;Raspberry Pi&lt;/a&gt; and then &lt;a href=&quot;http://nodered.org/&quot;&gt;Node-RED&lt;/a&gt; via &lt;a href=&quot;https://www.npmjs.com/&quot;&gt;npm&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-wireless-sensor-network&quot;&gt;The wireless sensor network&lt;/h2&gt;
+&lt;p&gt;The wireless sensor network is built with the &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; transceiver modules. The transceiver provides a link layer that features automatic acknowledgement and retransmissions of packets. On top of this a  tree based network layer, where each node has one parent and five child nodes, is implemented on the nodes and on the gateway. No fragmentation and reassembly is implemented in the network layers. Currently broadcasting and encryption are not implemented yet.&lt;/p&gt;
+
+&lt;h2 id=&quot;lessons-learned-and-conclusion&quot;&gt;Lessons learned and conclusion&lt;/h2&gt;
+&lt;p&gt;As always I completely underestimated the time I need to implement my ideas. I spent quite some time on understanding or fighting with Tycho and the hole build chain while working with Kura. It was nice that the Kura forum helped me with the (sometimes strange) questions I asked. I could even give a little bit back to the Kura community by my &lt;a href=&quot;https://github.com/eclipse/kura/pull/30&quot;&gt;pull request&lt;/a&gt; that got meregd to Kura and fixed the SPI jdk.dio.policy.&lt;/p&gt;
+
+&lt;p&gt;I think the Kura framework provides a good platform to implement the MQTT-SN gateway. My MQTT-SN gateway is still in a prototype stage and missing some features. It is also too tightly coupled to my wireless sensor network implementation. I think this coupling could be removed and generalized so that other networks like UDP or ZigBee could be plugged in.&lt;/p&gt;
+
+&lt;p&gt;I choose to implement my own wireless sensor network based on the &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; transceiver modules because they are very inexpensive, are low power and I had a lot of them laying around. I’m not sure that it is the right way to continue, since it puts quite a burden on the sensor nodes to implement the network layer and it is still lacking some important features like encryption, broadcasting, fragmentation and reassembly.&lt;/p&gt;
+
+&lt;p&gt;I hope somebody enjoyed reading my posts. I for sure enjoyed working on my &lt;a href=&quot;http://iot.eclipse.org/open-iot-challenge/&quot;&gt;Eclipse Open IoT Challenge&lt;/a&gt; project and I’m still eager to further &lt;em&gt;play&lt;/em&gt; with IoT.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>IoT air humidifier test drive</title>
+      <link>http://incorporated.sendtoinc.com/2015/03/20/air-humidifier-test-drive/</link>
+      <pubDate>Fri, 20 Mar 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/03/20/air-humidifier-test-drive</guid>
+      <description>
+&lt;p&gt;With the deadline coming close, I did a first test drive for a IoT air humidifier:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/TestDriveSetup1.png&quot; alt=&quot;TestDriveSetup1&quot; /&gt;&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;The sensor node measures temperature and humidity and publishes them to the topics &lt;em&gt;Bittailor/PiOne/Node1/Sensors/Temperature&lt;/em&gt;&lt;br /&gt;
+and &lt;em&gt;Bittailor/PiOne/Node1/Sensors/Humidity&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;The actor node subscribes to the topic &lt;em&gt;Bittailor/PiOne/Node2/Actor/Switch&lt;/em&gt; to control the LED which acts as Humidifier.&lt;/p&gt;
+
+&lt;p&gt;The MQTT-SN messages are sent over the wireless sensor network to the MQTT-SN gateway running on the gateway node. The MQTT-SN gateway I built with Kura forwards them as MQTT messages to the Mosquitto MQTT broker, also running on the gateway.&lt;/p&gt;
+
+&lt;p&gt;And finally Node-RED, also running on the gateway, is used to wire the control logic.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/NodeRedControlFlow.png&quot; alt=&quot;NodeRedControlFlow&quot; /&gt;&lt;br /&gt;
+&lt;img src=&quot;/images/NodeRedControlCode.png&quot; alt=&quot;NodeRedControlFlow&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So lets make some dry air and see if it works.&lt;/p&gt;
+
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/lOs6_VtJEck&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;p&gt;&lt;br /&gt;&lt;br /&gt;
+It worked &lt;i class=&quot;fa fa-thumbs-o-up&quot;&gt;&lt;/i&gt;&lt;/p&gt;
+
+&lt;p&gt;The code for the nodes and the MQTT-SN gateway can be found on &lt;a href=&quot;https://github.com/bittailor/BtIot&quot;&gt;&lt;i class=&quot;fa fa-github fa-2x&quot;&gt;&lt;/i&gt;&lt;/a&gt;. It still needs some further development and clean up, but now I have to heat up my soldering iron and solder my sensor node PCBs.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Adventures in Tycho</title>
+      <link>http://incorporated.sendtoinc.com/2015/03/18/adventures-in-tycho/</link>
+      <pubDate>Wed, 18 Mar 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/03/18/adventures-in-tycho</guid>
+      <description>
+&lt;p&gt;To build my OSGI bundels that implement the MQTT-SN gateway I went with &lt;a href=&quot;https://eclipse.org/tycho/&quot;&gt;Tycho&lt;/a&gt; since I saw that Kura uses Tycho and also the &lt;a href=&quot;https://github.com/kartben/kura-greenhouse-demo&quot;&gt;kura-greenhouse-demo&lt;/a&gt; uses Tycho as build system. I expected that the Tycho build system is quite similar to &lt;em&gt;regular&lt;/em&gt; maven build system, but from my point of view (or lack of knowlege) Tycho is quite different than what I was used to from maven.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+&lt;p&gt;Besides compiling the sources, I expected that it would be straight forward to:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;define the build, runtime and test dependencies of a bundle. Then the build system will take care of fetching and caching them from binary repositories, so that there is no need to add binaries the the source code repository.&lt;/li&gt;
+  &lt;li&gt;having unit tests for a bundle which will be run by the build system.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;lets-start-with-the-2&quot;&gt;Lets start with the &lt;strong&gt;#2&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;With Tycho it is not possible to put your unit tests under &lt;small&gt;&lt;tt&gt;src/test/java&lt;/tt&gt;&lt;/small&gt; so I searched and found that one way is to create a &lt;a href=&quot;http://www.vogella.com/tutorials/EclipseFragmentProject/article.html&quot;&gt;plug-in fragment&lt;/a&gt; and use the &lt;strong&gt;eclipse-test-plugin&lt;/strong&gt; as the Maven packaging. Unfortunately this did not what I was expecting for unit tests. The &lt;strong&gt;eclipse-test-plugin&lt;/strong&gt; launches a complete OSGI environment, which, in my opinion, isn’t unit testing but rather integration testing. But my problem was that my bundle depends on the jdk.dio bundle which is only available on the target and not on the development machine and so the OSGI resolving failed. Therefore I could not run &lt;strong&gt;eclipse-test-plugin&lt;/strong&gt; tests on my development machine. I tried various alternatives and settled with the following:&lt;/p&gt;
+
+&lt;p&gt;I still create a seperate plug-in fragment but use &lt;strong&gt;eclipse-plugin&lt;/strong&gt; as the Maven packaging. I put all the unit tests into the &lt;small&gt;&lt;tt&gt;src/main/java&lt;/tt&gt;&lt;/small&gt; folder of this plug-in fragment project and then add the &lt;strong&gt;maven-surefire-plugin&lt;/strong&gt; to the POM of the plug-in fragment and configure the regular output directory as testClassesDirectory. You also have to add a dependency to junit 4 to the POM so that the &lt;strong&gt;maven-surefire-plugin&lt;/strong&gt; knows how to launch the tests;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-markup&quot;&gt;&amp;lt;project&amp;gt;
+  &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+  &amp;lt;parent&amp;gt;
+	  &amp;lt;groupId&amp;gt;ch.bittailor.iot&amp;lt;/groupId&amp;gt;
+ 	  &amp;lt;artifactId&amp;gt;ch.bittailor.iot.parent&amp;lt;/artifactId&amp;gt;
+  	&amp;lt;version&amp;gt;1.0.0-SNAPSHOT&amp;lt;/version&amp;gt;
+    &amp;lt;relativePath&amp;gt;../pom.xml&amp;lt;/relativePath&amp;gt;
+  &amp;lt;/parent&amp;gt;
+
+  &amp;lt;artifactId&amp;gt;ch.bittailor.iot.core.test&amp;lt;/artifactId&amp;gt;
+  &amp;lt;packaging&amp;gt;eclipse-plugin&amp;lt;/packaging&amp;gt;
+
+  &amp;lt;build&amp;gt;
+    &amp;lt;plugins&amp;gt;
+      &amp;lt;plugin&amp;gt;
+        &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+        &amp;lt;artifactId&amp;gt;maven-surefire-plugin&amp;lt;/artifactId&amp;gt;
+        &amp;lt;version&amp;gt;2.18.1&amp;lt;/version&amp;gt;
+        &amp;lt;executions&amp;gt;
+          &amp;lt;execution&amp;gt;
+            &amp;lt;id&amp;gt;test&amp;lt;/id&amp;gt;
+            &amp;lt;phase&amp;gt;test&amp;lt;/phase&amp;gt;
+            &amp;lt;configuration&amp;gt;
+              &amp;lt;testClassesDirectory&amp;gt;${project.build.outputDirectory}&amp;lt;/testClassesDirectory&amp;gt;
+            &amp;lt;/configuration&amp;gt;
+            &amp;lt;goals&amp;gt;
+              &amp;lt;goal&amp;gt;test&amp;lt;/goal&amp;gt;
+            &amp;lt;/goals&amp;gt;
+          &amp;lt;/execution&amp;gt;
+        &amp;lt;/executions&amp;gt;
+      &amp;lt;/plugin&amp;gt;
+    &amp;lt;/plugins&amp;gt;
+  &amp;lt;/build&amp;gt;
+
+  &amp;lt;dependencies&amp;gt;
+  	&amp;lt;dependency&amp;gt;
+  		&amp;lt;groupId&amp;gt;junit&amp;lt;/groupId&amp;gt;
+  		&amp;lt;artifactId&amp;gt;junit&amp;lt;/artifactId&amp;gt;
+  		&amp;lt;version&amp;gt;4.12&amp;lt;/version&amp;gt;
+  		&amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
+  	&amp;lt;/dependency&amp;gt;
+  &amp;lt;/dependencies&amp;gt;
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This now launches my tests as simple unit tests during a &lt;strong&gt;mvn clean verify&lt;/strong&gt;. So the next thing a wanted was to have &lt;a href=&quot;http://mockito.org/&quot;&gt;mockito&lt;/a&gt; available as mocking framework in my unit tests. With Tycho it is not possible to just add it as test dependency to the POM since Tycho uses a target-platform to resolve all its dependencies.&lt;/p&gt;
+
+&lt;h3 id=&quot;back-to-1-how-to-manage-dependencies-with-tycho&quot;&gt;Back to &lt;strong&gt;#1&lt;/strong&gt;, how to manage dependencies with Tycho&lt;/h3&gt;
+&lt;p&gt;I’m still struggeling with how to manage the dependencies with Tycho. As far as I understood it, Tycho uses the target platform to resolve all its dependencies. But I still could not find a way to define the the target platform for my needs (Kura bundles and mockito for testing) without adding binaries to the source code repository. I again &lt;a href=&quot;https://www.eclipse.org/forums/index.php/t/1028830/&quot;&gt;asked&lt;/a&gt; the Kura discussion forum for help. The current answer state is to write a “first-time-setup” script. But since I’m running out of time I focused on the implementation of the MQTT-SN gateway. So my source code is currently not buildable out of the source code repository but needs a handcrafted (kura) target platform on the development machine.&lt;/p&gt;
+
+&lt;p&gt;I recognized that also the &lt;a href=&quot;https://github.com/kartben/kura-greenhouse-demo&quot;&gt;kura-greenhouse-demo&lt;/a&gt; does not build out of the source code repository since it also relies on a kura target platform already present on the development machine. So my code is in good company &lt;i class=&quot;fa fa-smile-o&quot;&gt;&lt;/i&gt;.&lt;/p&gt;
+
+&lt;p&gt;Nevertheless I’m still eagerly interested in a solution to manage the kura dependencies/target-platform with Tycho without adding binaries into the source code repository. So that my maven experience of just doing &lt;strong&gt;git clone &amp;amp;&amp;amp; mvn clean verify&lt;/strong&gt; also holds with Tycho. So please comment here or in the Kura discussion forum &lt;a href=&quot;https://www.eclipse.org/forums/index.php/t/1028830/&quot;&gt;topic&lt;/a&gt; if you have some insights.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>My first steps with Eclipse Kura</title>
+      <link>http://incorporated.sendtoinc.com/2015/03/01/first-steps-with-kura/</link>
+      <pubDate>Sun, 01 Mar 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/03/01/first-steps-with-kura</guid>
+      <description>
+&lt;p&gt;When I started this project I did not know anything about &lt;a href=&quot;https://eclipse.org/kura/&quot;&gt;Kura&lt;/a&gt; besides its &lt;em&gt;slogan&lt;/em&gt; which sounds like a perfect match to build my MQTT-SN gateway.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Kura is a Java/OSGi-based framework for IoT gateways. Kura APIs offer access to the underlying hardware (serial ports, GPS, watchdog, GPIOs, I2C, etc.), management of network configurations, communication with M2M/IoT Integration Platforms, and gateway management.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;It’s also a couple of years ago since I worked with &lt;a href=&quot;http://www.osgi.org/Main/HomePage&quot;&gt;OSGI&lt;/a&gt;, &lt;a href=&quot;http://www.oracle.com/technetwork/java/index.html&quot;&gt;Java&lt;/a&gt; and &lt;a href=&quot;http://maven.apache.org/&quot;&gt;Maven&lt;/a&gt; and it’s also my first encounter with &lt;a href=&quot;https://eclipse.org/tycho/&quot;&gt;Tycho&lt;/a&gt;. So a lot of unknowns and challenges to tackle. I progressed quickly with the Kura &lt;a href=&quot;http://eclipse.github.io/kura/doc/hello-example.html&quot;&gt;Hello World Example&lt;/a&gt; but then my progress quickly slowed down.&lt;/p&gt;
+
+&lt;p&gt;But lets start from the beginning.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;I started by installing the Kura framework on my &lt;a href=&quot;http://www.raspberrypi.org/&quot;&gt;Raspberry Pi&lt;/a&gt; according to the &lt;a href=&quot;http://eclipse.github.io/kura/doc/raspberry-pi-quick-start.html&quot;&gt;Raspberry Pi Quick Start&lt;/a&gt; using the &lt;a href=&quot;https://eclipse.org/kura/downloads.php&quot;&gt;Kura 1.1.1 Extended Downloads&lt;/a&gt; packages. Unfortunately the first time I installed the &lt;em&gt;wrong&lt;/em&gt; package &lt;strong&gt;Raspbian (with Web UI) - Stable&lt;/strong&gt;. Installing it changed the network configuration on my pi and therefore my pi was not available on my WLAN anymore. So back to the start, uninstall the package re-setup the network configuration for my WLAN and then install the &lt;strong&gt;Raspbian (No, Net, with Web UI) - Stable&lt;/strong&gt; package. This time it worked out of the box.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kura_on_pi_start.png&quot; alt=&quot;Overview&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Next I set up the Kura Development Environment according to the &lt;a href=&quot;http://eclipse.github.io/kura/doc/kura-setup.html&quot;&gt;Getting Started&lt;/a&gt; guide. Then I followed the &lt;a href=&quot;http://eclipse.github.io/kura/doc/hello-example.html&quot;&gt;Hello World Example&lt;/a&gt; and was able to deploy the Hello World Deployment Package to my pi.&lt;/p&gt;
+
+&lt;p&gt;Next I created a &lt;em&gt;GPIO Hello World&lt;/em&gt; using a &lt;strong&gt;GPIOPin&lt;/strong&gt; from the &lt;strong&gt;jdk.dio&lt;/strong&gt; to turn a LED on when the bundle is started and off again when the bundle is stopped:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public class LedHelloWorld {
+  private static final Logger LOG = LoggerFactory.getLogger(LedHelloWorld.class);
+  private GPIOPin mLed;
+
+  protected void activate(ComponentContext componentContext) {
+      try {
+        mLed = DeviceManager.open(18);
+        mLed.setDirection(GPIOPin.OUTPUT);
+        mLed.setValue(true);
+      } catch (Exception e) {
+        LOG.error(&quot;LED on failed &quot;, e);
+      }
+    }
+
+    protected void deactivate(ComponentContext componentContext) {
+      try {
+        mLed.setValue(false);
+        mLed.close();
+        mLed = null;
+      } catch (Exception e) {
+        LOG.error(&quot;LED off failed &quot;, e);
+      }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This compiles in Eclipse, but when I tried to build of the Deployment Package the build failed with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-log&quot;&gt;# 2/7/15 4:35:16 PM CET
+# Eclipse Compiler for Java(TM) v20140902-0626, 3.10.0, Copyright IBM Corp 2000, 2013. All rights reserved.
+----------
+1. ERROR in .../HelloOsgi.java (at line 9)
+  import jdk.dio.ClosedDeviceException;
+         ^^^^^^^
+The import jdk.dio cannot be resolved
+----------
+2. ERROR in .../HelloOsgi.java (at line 10)
+  import jdk.dio.Device;
+         ^^^^^^^
+The import jdk.dio cannot be resolved
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I &lt;a href=&quot;https://www.eclipse.org/forums/index.php/t/984100/&quot;&gt;asked&lt;/a&gt; the Kura discussion forum for help, but for the Deployment Package I did not find any solution. The only workaround I found was for &lt;a href=&quot;http://eclipse.github.io/kura/doc/hello-example.html#export-the-osgi-bundle&quot;&gt;exporting an OSGI bundle&lt;/a&gt;. This build also fails with the same errors, but there is an option to reuse the class files already compiled in the workspace and since it builds inside of eclipse the export of the  OSGI bundle worked by enabling this option.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/eclipse-export-reuse-classes.png&quot; alt=&quot;ReuseClasses&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now when I start this bundle on my pi the LED turns on and when I stop the bundle the LED is turned off.&lt;/p&gt;
+
+&lt;p&gt;Next is using a &lt;strong&gt;SPIDevice&lt;/strong&gt; from the &lt;strong&gt;jdk.dio&lt;/strong&gt; to control the &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; transceiver. So here is my first &lt;em&gt;SPI Hello World&lt;/em&gt; I tried:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;public class NRF24HelloWorld {
+  private static final Logger LOG = LoggerFactory.getLogger(LedHelloWorld.class);
+
+  private static final byte CMD_R_REGISTER = 0x00;
+  private static final byte CMD_NOP = (byte) 0xFF;
+  private static final byte REGISTER_RX_ADDR_P0 = 0x0A;
+  private static final byte REGISTER_RX_ADDR_P1 = 0x0B;
+  private static final byte MASK_REGISTER_CMD = 0x1F;
+
+  protected void activate(ComponentContext componentContext) {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          readAddress();
+        } catch (Exception e) {
+          LOG.error(&quot;readAddress failed &quot;, e);
+        }
+      }
+    }).start();
+    ;
+  }
+
+  protected void deactivate(ComponentContext componentContext) {
+  }
+
+  private void readAddress() {
+    LOG.info(&quot;readAddress&quot;);
+    SPIDeviceConfig config = new SPIDeviceConfig(0, 0, SPIDeviceConfig.CS_ACTIVE_LOW,
+      8000000, 3, 8, Device.BIG_ENDIAN);
+
+    try (SPIDevice spi = DeviceManager.open(SPIDevice.class, config);
+         GPIOPin power = DeviceManager.open(27);) {
+      power.setDirection(GPIOPin.OUTPUT);
+
+      power.setValue(true);
+      LOG.info(&quot;power is on wait 2000ms&quot;);
+      Thread.sleep(2000);
+
+      ByteBuffer addressP0 = readRegister(spi, REGISTER_RX_ADDR_P0);
+      LOG.info(&quot;address P0 is 0x{}&quot;, bytesToHex(addressP0.array()));
+      ByteBuffer addressP1 = readRegister(spi, REGISTER_RX_ADDR_P1);
+      LOG.info(&quot;address P1 is 0x{}&quot;, bytesToHex(addressP1.array()));
+
+      LOG.info(&quot;just wait 2000ms&quot;);
+      Thread.sleep(2000);
+
+      power.setValue(false);
+      LOG.info(&quot;power off and wait 2000ms&quot;);
+      Thread.sleep(2000);
+
+    } catch (Exception e) {
+      LOG.error(&quot;Failed &quot;, e);
+    }
+  }
+
+  private ByteBuffer readRegister(SPIDevice spi, byte iRegister)
+    throws UnavailableDeviceException, ClosedDeviceException, IOException {
+    byte cmd = (byte) (CMD_R_REGISTER | (iRegister &amp;amp; MASK_REGISTER_CMD));
+    ByteBuffer txBuffer = ByteBuffer.wrap(new byte[] { cmd, CMD_NOP, CMD_NOP, CMD_NOP, CMD_NOP, CMD_NOP });
+    ByteBuffer rcBuffer = ByteBuffer.allocate(6);
+    spi.writeAndRead(txBuffer, rcBuffer);
+    rcBuffer.rewind();
+    LOG.info(&quot;read register status is {}&quot;, rcBuffer.get());
+    return rcBuffer.slice();
+  }
+
+  final protected static char[] hexArray = &quot;0123456789ABCDEF&quot;.toCharArray();
+  public static String bytesToHex(byte[] bytes) {
+    char[] hexChars = new char[bytes.length * 2];
+    for (int j = 0; j &amp;lt; bytes.length; j++) {
+      int v = bytes[j] &amp;amp; 0xFF;
+      hexChars[j * 2] = hexArray[v &amp;gt;&amp;gt;&amp;gt; 4];
+      hexChars[j * 2 + 1] = hexArray[v &amp;amp; 0x0F];
+    }
+    return new String(hexChars);
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This time it failed when starting the bundle:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-log&quot;&gt;java.security.AccessControlException: access denied jdk.dio.spibus.SPIPermission &#39;0:0&#39; open
+  at java.security.AccessControlContext.checkPermission(AccessControlContext.java:364)
+  at java.security.AccessController.checkPermission(AccessController.java:555)
+  at com.oracle.dio.spibus.impl.SPISlaveImpl.&amp;lt;init&amp;gt;(SPISlaveImpl.java:78)
+  at com.oracle.dio.spibus.impl.SPIDeviceFactory.create(SPIDeviceFactory.java:46)
+  at com.oracle.dio.spibus.impl.SPIDeviceFactory.create(SPIDeviceFactory.java:37)
+  at jdk.dio.DeviceManager.openWithConfig(DeviceManager.java:290)
+  at jdk.dio.DeviceManager.open(DeviceManager.java:610)
+  at jdk.dio.DeviceManager.open(DeviceManager.java:560)
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I again &lt;a href=&quot;https://www.eclipse.org/forums/index.php/t/987192/&quot;&gt;asked&lt;/a&gt; the Kura discussion forum for help. In the mean time I checked that the &lt;a href=&quot;http://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/&quot;&gt;SPI master driver is enabled&lt;/a&gt; on my pi, it was enabled. I also tried to open a I2CDevice, that worked so just the SPIDevice did not work. I then discovered, that there is an error in the jdk.dio.policy shipped with Kura. After fixing this problem, my &lt;em&gt;SPI Hello World&lt;/em&gt; worked and I could read the default addresses from &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; transceiver over SPI. Therefore I answered my forum question myself, opened a &lt;a href=&quot;https://bugs.eclipse.org/bugs/show_bug.cgi?id=459830&quot;&gt;bug&lt;/a&gt; and created a &lt;a href=&quot;https://github.com/eclipse/kura/pull/30&quot;&gt;pull request&lt;/a&gt; on Kura to fix it. And my pull request even got merged into the Kura develop branch, that’s open source &lt;i class=&quot;fa fa-thumbs-o-up&quot;&gt;&lt;/i&gt;.&lt;/p&gt;
+
+&lt;p&gt;After the &lt;em&gt;Hello Worlds&lt;/em&gt; I’m ready to start implementing the &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; controller and the sensor area network on top of it. For this I decided use Tycho/Maven so its possible to build it outside of the IDE and introduce &lt;a href=&quot;http://www.martinfowler.com/articles/continuousIntegration.html&quot;&gt;Continuous Integration&lt;/a&gt;. Not sure it was the right decision since I still &lt;em&gt;fight&lt;/em&gt; with Tycho but at least it solved my &lt;small&gt;&lt;tt&gt;import jdk.dio cannot be resolved&lt;/tt&gt;&lt;/small&gt; build problem. More about my fights with Tycho in the next post. The code of my current work in progress can be found &lt;a href=&quot;https://github.com/bittailor/BtIot&quot;&gt;here @ &lt;i class=&quot;fa fa-github&quot;&gt;&lt;/i&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I completely underestimated (as always) the time I need to implement the MQTT-SN gateway with the Kura framework. Good luck that the deadline for finalizing the IoT project has been extended:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;We want to give you all a bit more time to work on your project, so we are happy to let you know that the new deadline for submitting your final entry for the challenge is now Monday, March 23.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So I’m confident that I’m able to submit something working by the March 23.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Sensor Node PCB</title>
+      <link>http://incorporated.sendtoinc.com/2015/02/14/sensor-node-pcb/</link>
+      <pubDate>Sat, 14 Feb 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/02/14/sensor-node-pcb</guid>
+      <description>
+&lt;p&gt;Before starting with the &lt;em&gt;soft&lt;/em&gt; parts, I had to tackle the PCB design of the sensor nodes. This since my favorite PCB manufacturer was just about to close for Chinese New Year. I had to place the order before February 7, so that they get manufactured and shipped before the holiday. This week I just received an update:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Your order has been updated to the following status:&lt;br /&gt;
+&lt;em&gt;Shipped&lt;/em&gt;&lt;/p&gt;
+
+  &lt;p&gt;&lt;small&gt; 12.Feb - &lt;a href=&quot;http://smart-prototyping.com&quot;&gt;Smart-Prototyping&lt;/a&gt;&lt;/small&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;i class=&quot;fa fa-thumbs-o-up&quot;&gt;&lt;/i&gt; My sensor nodes PCB’s are on their way.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;Since I was kind of in a hurry, I used auto routing and did not do a lot of checking before ordering them. Let’s hope they work and that they do not contain too many mistakes that couldn’t be fixed by some extra wiring. Here are the top and bottom views:&lt;/p&gt;
+
+&lt;p&gt;Top:&lt;br /&gt;
+&lt;img src=&quot;/images/SensorNodeTop.png&quot; alt=&quot;SensorNodeTop&quot; /&gt;&lt;br /&gt;
+Bottom:&lt;br /&gt;
+&lt;img src=&quot;/images/SensorNodeBottom.png&quot; alt=&quot;SensorNodeBottom&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The sensor nodes PCB connects:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the &lt;a href=&quot;http://www.atmel.com/devices/atmega328p.aspx&quot;&gt;ATmega328&lt;/a&gt; with the 8MHz crystal oscillator&lt;/li&gt;
+  &lt;li&gt;the &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; transceiver module&lt;/li&gt;
+  &lt;li&gt;a &lt;a href=&quot;http://www.adafruit.com/product/385&quot;&gt;DHT22&lt;/a&gt; temperature and humidity sensor&lt;/li&gt;
+  &lt;li&gt;a &lt;a href=&quot;https://www.adafruit.com/product/391&quot;&gt;BMP085&lt;/a&gt; barometric pressure and altitude sensor&lt;/li&gt;
+  &lt;li&gt;a &lt;a href=&quot;http://www.mouser.com/ds/2/215/2468-285365.pdf&quot;&gt;battery holder&lt;/a&gt; for 2 AAA batteries&lt;/li&gt;
+  &lt;li&gt;a &lt;a href=&quot;https://www.sparkfun.com/products/10967&quot;&gt;NCP1402&lt;/a&gt; 3.3V Step-Up power converter&lt;/li&gt;
+  &lt;li&gt;and a simple voltage divider to monitor the battery level&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I will publish the design after I verified (and probably correted) it with the first batch of PCB’s.&lt;/p&gt;
+
+&lt;p&gt;So now I move on to the &lt;em&gt;soft&lt;/em&gt; parts.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Project idea details</title>
+      <link>http://incorporated.sendtoinc.com/2015/01/27/project-idea-details/</link>
+      <pubDate>Tue, 27 Jan 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/01/27/project-idea-details</guid>
+      <description>
+&lt;p&gt;Let’s dive into some details after the &lt;a href=&quot;/2015/01/25/project-idea/&quot;&gt;last post&lt;/a&gt; gave an overview of my project idea.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/project-overview.png&quot; alt=&quot;Overview&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;sensor-and-actor-nodes&quot;&gt;Sensor and Actor Nodes&lt;/h2&gt;
+&lt;p&gt;All the sensor and actor nodes will be based on the &lt;a href=&quot;http://arduino.cc/&quot;&gt;Arduino&lt;/a&gt; open-source physical computing platform. They will use a &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; ultra low power 2.4GHz transceiver to communicate over the &lt;a href=&quot;#SensorAreaNetwork&quot;&gt;wireless sensor area network&lt;/a&gt;. They will use &lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot;&gt;MQTT-SN&lt;/a&gt; to publish the sensor data and subscribe to actor commands.&lt;/p&gt;
+
+&lt;p&gt;I will create two types of nodes:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Battery powered sensor nodes:&lt;/strong&gt; They will be powered with two AAA batteries and they should run for more than six months without changing the batteries. I will use a &lt;a href=&quot;http://www.atmel.com/devices/atmega328p.aspx&quot;&gt;ATmega328&lt;/a&gt; running at 8MHz and operated with 3.3V. They will periodically read all the sensors, publish the data to the gateway and then sleep till the next read period, utilizing the &lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot;&gt;MQTT-SN&lt;/a&gt; support of sleeping clients. I will create a custom PCB for a sensor node with a temperature &amp;amp; humidity sensor and a barometric pressure sensor.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Mains powered actor nodes:&lt;/strong&gt; Since they have no power constrains I will use the &lt;a href=&quot;http://www.atmel.com/devices/atmega328p.aspx&quot;&gt;ATmega328&lt;/a&gt; running at 16MHz and operated with 5V. I will create an actor node with a relay that switches a mains socket.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;the-gateway-node&quot;&gt;The Gateway Node&lt;/h2&gt;
+&lt;p&gt;The gateway will be built with a &lt;a href=&quot;http://www.raspberrypi.org/&quot;&gt;Raspberry Pi&lt;/a&gt;. It will use a &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; 2.4GHz transceiver to communicate over the &lt;a href=&quot;#SensorAreaNetwork&quot;&gt;wireless sensor area network&lt;/a&gt;. There will be three main services on the gateway node:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;A &lt;strong&gt;MQTT-SN gateway&lt;/strong&gt; which &lt;em&gt;gateways&lt;/em&gt; the MQTT-SN messages of the sensor area network to MQTT messages of the local area network. I will build a transparent MQTT-SN gateway with the help of the &lt;a href=&quot;https://eclipse.org/kura/&quot;&gt;Kura&lt;/a&gt; framework and the &lt;a href=&quot;https://eclipse.org/paho/&quot;&gt;Paho&lt;/a&gt; libraries.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;A &lt;a href=&quot;http://mosquitto.org/&quot;&gt;Mosquitto&lt;/a&gt; instance as a local &lt;strong&gt;MQTT Broker&lt;/strong&gt; instance.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;A &lt;a href=&quot;http://nodered.org/&quot;&gt;Node-RED&lt;/a&gt; instance used to:&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Create the wiring and logic for the home automation.&lt;/li&gt;
+      &lt;li&gt;Forward the sensor data to cloud services.&lt;/li&gt;
+      &lt;li&gt;Create further API’s.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;a-namesensorareanetworkathe-wireless-sensor-area-network&quot;&gt;&lt;a name=&quot;SensorAreaNetwork&quot;&gt;&lt;/a&gt;The wireless sensor area network&lt;/h2&gt;
+&lt;p&gt;The wireless sensor area network will be built based on the &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; ultra low power 2.4GHz transceivers. I will use them since the are very popular in the maker area, very inexpensive and &lt;a href=&quot;http://www.ebay.com/sch/i.html?_nkw=NRF24L01%2B&quot;&gt;widely available&lt;/a&gt;. The transceiver provides a link layer that features automatic packet assembly and timing, automatic acknowledgement and retransmissions of packets. On top of this a simple tree based sensor area network layer will be implemented on the sensor and actor nodes and on the gateway node. No fragmentation and reassembly will be implemented in the sensor area network layers, therefore the maximum packet size is restricted and so is the the maximum length of a &lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot;&gt;MQTT-SN&lt;/a&gt; message.&lt;/p&gt;
+
+&lt;h2 id=&quot;recap&quot;&gt;Recap&lt;/h2&gt;
+
+&lt;h3 id=&quot;hardware&quot;&gt;Hardware&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.raspberrypi.org/&quot;&gt;Raspberry Pi&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.atmel.com/devices/atmega328p.aspx&quot;&gt;ATmega328&lt;/a&gt; (&lt;a href=&quot;http://arduino.cc/en/Main/ArduinoBoardUno&quot;&gt;Arduino UNO&lt;/a&gt; based)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; transivers&lt;/li&gt;
+  &lt;li&gt;…&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;software&quot;&gt;Software&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://eclipse.org/kura/&quot;&gt;Kura&lt;/a&gt; framework&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://eclipse.org/paho/&quot;&gt;Paho&lt;/a&gt; libraries&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://mosquitto.org/&quot;&gt;Mosquitto&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://nodered.org/&quot;&gt;Node-RED&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Various &lt;a href=&quot;http://arduino.cc/en/Reference/Libraries&quot;&gt;Arduino libraries&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://raspbian.org/&quot;&gt;Raspbian&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;…&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;protocols&quot;&gt;Protocols&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot;&gt;MQTT-SN&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://mqtt.org&quot;&gt;MQTT&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;…&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;enough about ideas … let’s go to work and have FUN&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>My project idea for the Eclipse Open IoT Challenge</title>
+      <link>http://incorporated.sendtoinc.com/2015/01/25/project-idea/</link>
+      <pubDate>Sun, 25 Jan 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/01/25/project-idea</guid>
+      <description>
+&lt;p&gt;My idea for the &lt;a href=&quot;http://iot.eclipse.org/open-iot-challenge/&quot;&gt;Eclipse Open IoT Challenge&lt;/a&gt; came from my need to measure the humidity in my rooms, to track it and also control air humidifiers based on the humidity. I used some humidifier control plugs, but they were just not &lt;em&gt;smart&lt;/em&gt; enough. Since I like  electronic tinkering and have some interrest in IoT, why not build a DIY solution. For the &lt;a href=&quot;http://iot.eclipse.org/open-iot-challenge/&quot;&gt;Eclipse Open IoT Challenge&lt;/a&gt; this transformed into the more generic idea to build a maker friendly DIY IoT home automation solution.&lt;/p&gt;
+
+&lt;!-- more --&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;The plan is to create &lt;a href=&quot;http://arduino.cc/&quot;&gt;Arduino&lt;/a&gt; based sensor and actor nodes that use &lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot;&gt;MQTT-SN&lt;/a&gt; to communicate over a &lt;a href=&quot;https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P&quot;&gt;nRF24L01+&lt;/a&gt; based wireless sensor area network. They send and receive their messages via a &lt;a href=&quot;http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf&quot;&gt;MQTT-SN&lt;/a&gt; gateway to a &lt;a href=&quot;http://mqtt.org&quot;&gt;MQTT&lt;/a&gt; broker. The gateway and the broker run on a &lt;a href=&quot;http://www.raspberrypi.org/&quot;&gt;Raspberry Pi&lt;/a&gt; gateway node. Also on the &lt;a href=&quot;http://www.raspberrypi.org/&quot;&gt;Raspberry Pi&lt;/a&gt; runs an instance of &lt;a href=&quot;http://nodered.org/&quot;&gt;Node-RED&lt;/a&gt; which is connected to the &lt;a href=&quot;http://mqtt.org&quot;&gt;MQTT&lt;/a&gt; broker and is used to wire the things and make them &lt;em&gt;smart&lt;/em&gt;. &lt;a href=&quot;http://nodered.org/&quot;&gt;Node-RED&lt;/a&gt; will also be used to forward the sensor data to cloud services like &lt;a href=&quot;https://thingspeak.com&quot;&gt;ThingSpeak&lt;/a&gt; or &lt;a href=&quot;https://xively.com/&quot;&gt;Xively&lt;/a&gt; to store, analyse and present the data.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/project-overview.png&quot; alt=&quot;Overview&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outlook&quot;&gt;Outlook&lt;/h2&gt;
+
+&lt;p&gt;We got new snow today&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/snow-today.jpg&quot; alt=&quot;SnowToday&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;so IoT had to wait for the evening and the details of&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the wireless sensor area network&lt;/li&gt;
+  &lt;li&gt;the sensor and actor nodes&lt;/li&gt;
+  &lt;li&gt;the gateway&lt;/li&gt;
+  &lt;li&gt;the used software stacks&lt;/li&gt;
+  &lt;li&gt;the hardware details&lt;/li&gt;
+  &lt;li&gt;…&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;have to wait for the next post.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Getting ready for the IoT challenge</title>
+      <link>http://incorporated.sendtoinc.com/2015/01/23/setup-iot-challenge-blog/</link>
+      <pubDate>Fri, 23 Jan 2015 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://incorporated.sendtoinc.com/2015/01/23/setup-iot-challenge-blog</guid>
+      <description>&lt;ul&gt;
+  &lt;li&gt;jekyll =&amp;gt; done.&lt;/li&gt;
+  &lt;li&gt;customize =&amp;gt; done.&lt;/li&gt;
+  &lt;li&gt;connect to DISQUS =&amp;gt; done.&lt;/li&gt;
+  &lt;li&gt;publish to github =&amp;gt; done.&lt;/li&gt;
+  &lt;li&gt;blog about the general idea of my project … stay tuned …&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    
+
+  </channel>
+</rss>

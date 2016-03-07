@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <title>My project idea for the Eclipse Open IoT Challenge &mdash; BITtailor @ Eclipse Open IoT Challenge</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="stylesheet" href="/assets/prism.css">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/images/logo.jpg"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="BITtailor @ Eclipse Open IoT Challenge" />
+    <meta name="title" content="My project idea for the Eclipse Open IoT Challenge ">
+    <link rel="canonical" href="http://incorporated.sendtoinc.com/2015/01/25/project-idea/">
+    
+    
+    <meta property="og:title" content="My project idea for the Eclipse Open IoT Challenge "/>
+    <meta property="og:url" content="http://incorporated.sendtoinc.com/2015/01/25/project-idea/"/>
+    
+
+
+
+    <meta property="og:site_name" content="BITtailor @ Eclipse Open IoT Challenge">
+
+</head>
+<body>
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+              <i class="fa fa-home fa-2x"></i>  <i class="fa fa-plug fa-rotate-45"></i> <i class="fa fa-cloud fa-2x"></i>
+              <!-- <img src="/images/logo.jpg" alt="Inc"> -->
+            </a>
+            <a href="/edition/second/">2.0</a>
+            <a href="/edition/first">1.0</a>
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="BITtailor" target="_blank">BITtailor</a></address> &mdash;
+                <time pubdate datetime="2015-25-January" title="January 25, 2015">January 25, 2015</time>
+            </div>
+            <h1 class="title">My project idea for the Eclipse Open IoT Challenge</h1>
+            <h2 class="subtitle">Creating a maker friendly DIY IoT home automation solution</h2>
+        </header>
+
+        <section>
+            
+<p>My idea for the <a href="http://iot.eclipse.org/open-iot-challenge/">Eclipse Open IoT Challenge</a> came from my need to measure the humidity in my rooms, to track it and also control air humidifiers based on the humidity. I used some humidifier control plugs, but they were just not <em>smart</em> enough. Since I like  electronic tinkering and have some interrest in IoT, why not build a DIY solution. For the <a href="http://iot.eclipse.org/open-iot-challenge/">Eclipse Open IoT Challenge</a> this transformed into the more generic idea to build a maker friendly DIY IoT home automation solution.</p>
+
+<!-- more -->
+
+<h2 id="overview">Overview</h2>
+
+<p>The plan is to create <a href="http://arduino.cc/">Arduino</a> based sensor and actor nodes that use <a href="http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf">MQTT-SN</a> to communicate over a <a href="https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P">nRF24L01+</a> based wireless sensor area network. They send and receive their messages via a <a href="http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf">MQTT-SN</a> gateway to a <a href="http://mqtt.org">MQTT</a> broker. The gateway and the broker run on a <a href="http://www.raspberrypi.org/">Raspberry Pi</a> gateway node. Also on the <a href="http://www.raspberrypi.org/">Raspberry Pi</a> runs an instance of <a href="http://nodered.org/">Node-RED</a> which is connected to the <a href="http://mqtt.org">MQTT</a> broker and is used to wire the things and make them <em>smart</em>. <a href="http://nodered.org/">Node-RED</a> will also be used to forward the sensor data to cloud services like <a href="https://thingspeak.com">ThingSpeak</a> or <a href="https://xively.com/">Xively</a> to store, analyse and present the data.</p>
+
+<p><img src="/images/project-overview.png" alt="Overview" /></p>
+
+<h2 id="outlook">Outlook</h2>
+
+<p>We got new snow today</p>
+
+<p><img src="/images/snow-today.jpg" alt="SnowToday" /></p>
+
+<p>so IoT had to wait for the evening and the details of</p>
+
+<ul>
+  <li>the wireless sensor area network</li>
+  <li>the sensor and actor nodes</li>
+  <li>the gateway</li>
+  <li>the used software stacks</li>
+  <li>the hardware details</li>
+  <li>…</li>
+</ul>
+
+<p>have to wait for the next post.</p>
+
+            
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/bittailor_ch" title="" target="_blank">BITtailor</a></strong><br>
+                <span class="muted">passion for the bits and bytes</span>
+                </p>
+            </address>
+
+        </footer>
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'bittailoriotchallenge'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2016
+
+        <nav>
+            <a href="http://bittailor.ch/">BITtailor</a> &middot;
+            <a href="/">Blog</a> &middot;
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+
+        <nav class="social">
+            
+            <a href="https://twitter.com/bittailor_ch" title="Follow on Twitter" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            
+            <a href="http://github.com/bittailor" title="Fork on Github" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            <a href="/feed.xml" title="RSS Feed">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x"></i>
+              </span>
+            </a>
+
+        </nav>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <title>IoT air humidifier test drive &mdash; BITtailor @ Eclipse Open IoT Challenge</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="stylesheet" href="/assets/prism.css">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/images/logo.jpg"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="BITtailor @ Eclipse Open IoT Challenge" />
+    <meta name="title" content="IoT air humidifier test drive ">
+    <link rel="canonical" href="http://incorporated.sendtoinc.com/2015/03/20/air-humidifier-test-drive/">
+    
+    
+    <meta property="og:title" content="IoT air humidifier test drive "/>
+    <meta property="og:url" content="http://incorporated.sendtoinc.com/2015/03/20/air-humidifier-test-drive/"/>
+    
+
+
+
+    <meta property="og:site_name" content="BITtailor @ Eclipse Open IoT Challenge">
+
+</head>
+<body>
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+              <i class="fa fa-home fa-2x"></i>  <i class="fa fa-plug fa-rotate-45"></i> <i class="fa fa-cloud fa-2x"></i>
+              <!-- <img src="/images/logo.jpg" alt="Inc"> -->
+            </a>
+            <a href="/edition/second/">2.0</a>
+            <a href="/edition/first">1.0</a>
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="BITtailor" target="_blank">BITtailor</a></address> &mdash;
+                <time pubdate datetime="2015-20-March" title="March 20, 2015">March 20, 2015</time>
+            </div>
+            <h1 class="title">IoT air humidifier test drive</h1>
+            <h2 class="subtitle">Creating a maker friendly DIY IoT home automation solution</h2>
+        </header>
+
+        <section>
+            
+<p>With the deadline coming close, I did a first test drive for a IoT air humidifier:</p>
+
+<p><img src="/images/TestDriveSetup1.png" alt="TestDriveSetup1" /></p>
+
+<!-- more -->
+
+<p>The sensor node measures temperature and humidity and publishes them to the topics <em>Bittailor/PiOne/Node1/Sensors/Temperature</em><br />
+and <em>Bittailor/PiOne/Node1/Sensors/Humidity</em>.</p>
+
+<p>The actor node subscribes to the topic <em>Bittailor/PiOne/Node2/Actor/Switch</em> to control the LED which acts as Humidifier.</p>
+
+<p>The MQTT-SN messages are sent over the wireless sensor network to the MQTT-SN gateway running on the gateway node. The MQTT-SN gateway I built with Kura forwards them as MQTT messages to the Mosquitto MQTT broker, also running on the gateway.</p>
+
+<p>And finally Node-RED, also running on the gateway, is used to wire the control logic.</p>
+
+<p><img src="/images/NodeRedControlFlow.png" alt="NodeRedControlFlow" /><br />
+<img src="/images/NodeRedControlCode.png" alt="NodeRedControlFlow" /></p>
+
+<p>So lets make some dry air and see if it works.</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/lOs6_VtJEck" frameborder="0" allowfullscreen=""></iframe>
+<p><br /><br />
+It worked <i class="fa fa-thumbs-o-up"></i></p>
+
+<p>The code for the nodes and the MQTT-SN gateway can be found on <a href="https://github.com/bittailor/BtIot"><i class="fa fa-github fa-2x"></i></a>. It still needs some further development and clean up, but now I have to heat up my soldering iron and solder my sensor node PCBs.</p>
+
+            
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/bittailor_ch" title="" target="_blank">BITtailor</a></strong><br>
+                <span class="muted">passion for the bits and bytes</span>
+                </p>
+            </address>
+
+        </footer>
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'bittailoriotchallenge'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2016
+
+        <nav>
+            <a href="http://bittailor.ch/">BITtailor</a> &middot;
+            <a href="/">Blog</a> &middot;
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+
+        <nav class="social">
+            
+            <a href="https://twitter.com/bittailor_ch" title="Follow on Twitter" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            
+            <a href="http://github.com/bittailor" title="Fork on Github" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            <a href="/feed.xml" title="RSS Feed">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x"></i>
+              </span>
+            </a>
+
+        </nav>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+</body>
+</html>

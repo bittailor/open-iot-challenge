@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <title>My first steps with Eclipse Kura &mdash; BITtailor @ Eclipse Open IoT Challenge</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="stylesheet" href="/assets/prism.css">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/images/logo.jpg"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="BITtailor @ Eclipse Open IoT Challenge" />
+    <meta name="title" content="My first steps with Eclipse Kura ">
+    <link rel="canonical" href="http://incorporated.sendtoinc.com/2015/03/01/first-steps-with-kura/">
+    
+    
+    <meta property="og:title" content="My first steps with Eclipse Kura "/>
+    <meta property="og:url" content="http://incorporated.sendtoinc.com/2015/03/01/first-steps-with-kura/"/>
+    
+
+
+
+    <meta property="og:site_name" content="BITtailor @ Eclipse Open IoT Challenge">
+
+</head>
+<body>
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+              <i class="fa fa-home fa-2x"></i>  <i class="fa fa-plug fa-rotate-45"></i> <i class="fa fa-cloud fa-2x"></i>
+              <!-- <img src="/images/logo.jpg" alt="Inc"> -->
+            </a>
+            <a href="/edition/second/">2.0</a>
+            <a href="/edition/first">1.0</a>
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="BITtailor" target="_blank">BITtailor</a></address> &mdash;
+                <time pubdate datetime="2015-01-March" title="March 01, 2015">March 01, 2015</time>
+            </div>
+            <h1 class="title">My first steps with Eclipse Kura</h1>
+            <h2 class="subtitle">Creating a maker friendly DIY IoT home automation solution</h2>
+        </header>
+
+        <section>
+            
+<p>When I started this project I did not know anything about <a href="https://eclipse.org/kura/">Kura</a> besides its <em>slogan</em> which sounds like a perfect match to build my MQTT-SN gateway.</p>
+
+<blockquote>
+  <p>Kura is a Java/OSGi-based framework for IoT gateways. Kura APIs offer access to the underlying hardware (serial ports, GPS, watchdog, GPIOs, I2C, etc.), management of network configurations, communication with M2M/IoT Integration Platforms, and gateway management.</p>
+</blockquote>
+
+<p>It’s also a couple of years ago since I worked with <a href="http://www.osgi.org/Main/HomePage">OSGI</a>, <a href="http://www.oracle.com/technetwork/java/index.html">Java</a> and <a href="http://maven.apache.org/">Maven</a> and it’s also my first encounter with <a href="https://eclipse.org/tycho/">Tycho</a>. So a lot of unknowns and challenges to tackle. I progressed quickly with the Kura <a href="http://eclipse.github.io/kura/doc/hello-example.html">Hello World Example</a> but then my progress quickly slowed down.</p>
+
+<p>But lets start from the beginning.</p>
+
+<!-- more -->
+
+<p>I started by installing the Kura framework on my <a href="http://www.raspberrypi.org/">Raspberry Pi</a> according to the <a href="http://eclipse.github.io/kura/doc/raspberry-pi-quick-start.html">Raspberry Pi Quick Start</a> using the <a href="https://eclipse.org/kura/downloads.php">Kura 1.1.1 Extended Downloads</a> packages. Unfortunately the first time I installed the <em>wrong</em> package <strong>Raspbian (with Web UI) - Stable</strong>. Installing it changed the network configuration on my pi and therefore my pi was not available on my WLAN anymore. So back to the start, uninstall the package re-setup the network configuration for my WLAN and then install the <strong>Raspbian (No, Net, with Web UI) - Stable</strong> package. This time it worked out of the box.</p>
+
+<p><img src="/images/kura_on_pi_start.png" alt="Overview" /></p>
+
+<p>Next I set up the Kura Development Environment according to the <a href="http://eclipse.github.io/kura/doc/kura-setup.html">Getting Started</a> guide. Then I followed the <a href="http://eclipse.github.io/kura/doc/hello-example.html">Hello World Example</a> and was able to deploy the Hello World Deployment Package to my pi.</p>
+
+<p>Next I created a <em>GPIO Hello World</em> using a <strong>GPIOPin</strong> from the <strong>jdk.dio</strong> to turn a LED on when the bundle is started and off again when the bundle is stopped:</p>
+
+<pre><code class="language-java">public class LedHelloWorld {
+  private static final Logger LOG = LoggerFactory.getLogger(LedHelloWorld.class);
+  private GPIOPin mLed;
+
+  protected void activate(ComponentContext componentContext) {
+      try {
+        mLed = DeviceManager.open(18);
+        mLed.setDirection(GPIOPin.OUTPUT);
+        mLed.setValue(true);
+      } catch (Exception e) {
+        LOG.error("LED on failed ", e);
+      }
+    }
+
+    protected void deactivate(ComponentContext componentContext) {
+      try {
+        mLed.setValue(false);
+        mLed.close();
+        mLed = null;
+      } catch (Exception e) {
+        LOG.error("LED off failed ", e);
+      }
+    }
+}
+</code></pre>
+
+<p>This compiles in Eclipse, but when I tried to build of the Deployment Package the build failed with:</p>
+
+<pre><code class="language-log"># 2/7/15 4:35:16 PM CET
+# Eclipse Compiler for Java(TM) v20140902-0626, 3.10.0, Copyright IBM Corp 2000, 2013. All rights reserved.
+----------
+1. ERROR in .../HelloOsgi.java (at line 9)
+  import jdk.dio.ClosedDeviceException;
+         ^^^^^^^
+The import jdk.dio cannot be resolved
+----------
+2. ERROR in .../HelloOsgi.java (at line 10)
+  import jdk.dio.Device;
+         ^^^^^^^
+The import jdk.dio cannot be resolved
+...
+</code></pre>
+
+<p>I <a href="https://www.eclipse.org/forums/index.php/t/984100/">asked</a> the Kura discussion forum for help, but for the Deployment Package I did not find any solution. The only workaround I found was for <a href="http://eclipse.github.io/kura/doc/hello-example.html#export-the-osgi-bundle">exporting an OSGI bundle</a>. This build also fails with the same errors, but there is an option to reuse the class files already compiled in the workspace and since it builds inside of eclipse the export of the  OSGI bundle worked by enabling this option.</p>
+
+<p><img src="/images/eclipse-export-reuse-classes.png" alt="ReuseClasses" /></p>
+
+<p>Now when I start this bundle on my pi the LED turns on and when I stop the bundle the LED is turned off.</p>
+
+<p>Next is using a <strong>SPIDevice</strong> from the <strong>jdk.dio</strong> to control the <a href="https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P">nRF24L01+</a> transceiver. So here is my first <em>SPI Hello World</em> I tried:</p>
+
+<pre><code class="language-java">public class NRF24HelloWorld {
+  private static final Logger LOG = LoggerFactory.getLogger(LedHelloWorld.class);
+
+  private static final byte CMD_R_REGISTER = 0x00;
+  private static final byte CMD_NOP = (byte) 0xFF;
+  private static final byte REGISTER_RX_ADDR_P0 = 0x0A;
+  private static final byte REGISTER_RX_ADDR_P1 = 0x0B;
+  private static final byte MASK_REGISTER_CMD = 0x1F;
+
+  protected void activate(ComponentContext componentContext) {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          readAddress();
+        } catch (Exception e) {
+          LOG.error("readAddress failed ", e);
+        }
+      }
+    }).start();
+    ;
+  }
+
+  protected void deactivate(ComponentContext componentContext) {
+  }
+
+  private void readAddress() {
+    LOG.info("readAddress");
+    SPIDeviceConfig config = new SPIDeviceConfig(0, 0, SPIDeviceConfig.CS_ACTIVE_LOW,
+      8000000, 3, 8, Device.BIG_ENDIAN);
+
+    try (SPIDevice spi = DeviceManager.open(SPIDevice.class, config);
+         GPIOPin power = DeviceManager.open(27);) {
+      power.setDirection(GPIOPin.OUTPUT);
+
+      power.setValue(true);
+      LOG.info("power is on wait 2000ms");
+      Thread.sleep(2000);
+
+      ByteBuffer addressP0 = readRegister(spi, REGISTER_RX_ADDR_P0);
+      LOG.info("address P0 is 0x{}", bytesToHex(addressP0.array()));
+      ByteBuffer addressP1 = readRegister(spi, REGISTER_RX_ADDR_P1);
+      LOG.info("address P1 is 0x{}", bytesToHex(addressP1.array()));
+
+      LOG.info("just wait 2000ms");
+      Thread.sleep(2000);
+
+      power.setValue(false);
+      LOG.info("power off and wait 2000ms");
+      Thread.sleep(2000);
+
+    } catch (Exception e) {
+      LOG.error("Failed ", e);
+    }
+  }
+
+  private ByteBuffer readRegister(SPIDevice spi, byte iRegister)
+    throws UnavailableDeviceException, ClosedDeviceException, IOException {
+    byte cmd = (byte) (CMD_R_REGISTER | (iRegister &amp; MASK_REGISTER_CMD));
+    ByteBuffer txBuffer = ByteBuffer.wrap(new byte[] { cmd, CMD_NOP, CMD_NOP, CMD_NOP, CMD_NOP, CMD_NOP });
+    ByteBuffer rcBuffer = ByteBuffer.allocate(6);
+    spi.writeAndRead(txBuffer, rcBuffer);
+    rcBuffer.rewind();
+    LOG.info("read register status is {}", rcBuffer.get());
+    return rcBuffer.slice();
+  }
+
+  final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+  public static String bytesToHex(byte[] bytes) {
+    char[] hexChars = new char[bytes.length * 2];
+    for (int j = 0; j &lt; bytes.length; j++) {
+      int v = bytes[j] &amp; 0xFF;
+      hexChars[j * 2] = hexArray[v &gt;&gt;&gt; 4];
+      hexChars[j * 2 + 1] = hexArray[v &amp; 0x0F];
+    }
+    return new String(hexChars);
+  }
+}
+</code></pre>
+
+<p>This time it failed when starting the bundle:</p>
+
+<pre><code class="language-log">java.security.AccessControlException: access denied jdk.dio.spibus.SPIPermission '0:0' open
+  at java.security.AccessControlContext.checkPermission(AccessControlContext.java:364)
+  at java.security.AccessController.checkPermission(AccessController.java:555)
+  at com.oracle.dio.spibus.impl.SPISlaveImpl.&lt;init&gt;(SPISlaveImpl.java:78)
+  at com.oracle.dio.spibus.impl.SPIDeviceFactory.create(SPIDeviceFactory.java:46)
+  at com.oracle.dio.spibus.impl.SPIDeviceFactory.create(SPIDeviceFactory.java:37)
+  at jdk.dio.DeviceManager.openWithConfig(DeviceManager.java:290)
+  at jdk.dio.DeviceManager.open(DeviceManager.java:610)
+  at jdk.dio.DeviceManager.open(DeviceManager.java:560)
+...
+</code></pre>
+
+<p>I again <a href="https://www.eclipse.org/forums/index.php/t/987192/">asked</a> the Kura discussion forum for help. In the mean time I checked that the <a href="http://www.raspberrypi.org/documentation/hardware/raspberrypi/spi/">SPI master driver is enabled</a> on my pi, it was enabled. I also tried to open a I2CDevice, that worked so just the SPIDevice did not work. I then discovered, that there is an error in the jdk.dio.policy shipped with Kura. After fixing this problem, my <em>SPI Hello World</em> worked and I could read the default addresses from <a href="https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P">nRF24L01+</a> transceiver over SPI. Therefore I answered my forum question myself, opened a <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=459830">bug</a> and created a <a href="https://github.com/eclipse/kura/pull/30">pull request</a> on Kura to fix it. And my pull request even got merged into the Kura develop branch, that’s open source <i class="fa fa-thumbs-o-up"></i>.</p>
+
+<p>After the <em>Hello Worlds</em> I’m ready to start implementing the <a href="https://www.nordicsemi.com/eng/Products/2.4GHz-RF/nRF24L01P">nRF24L01+</a> controller and the sensor area network on top of it. For this I decided use Tycho/Maven so its possible to build it outside of the IDE and introduce <a href="http://www.martinfowler.com/articles/continuousIntegration.html">Continuous Integration</a>. Not sure it was the right decision since I still <em>fight</em> with Tycho but at least it solved my <small><tt>import jdk.dio cannot be resolved</tt></small> build problem. More about my fights with Tycho in the next post. The code of my current work in progress can be found <a href="https://github.com/bittailor/BtIot">here @ <i class="fa fa-github"></i></a>.</p>
+
+<p>I completely underestimated (as always) the time I need to implement the MQTT-SN gateway with the Kura framework. Good luck that the deadline for finalizing the IoT project has been extended:</p>
+
+<blockquote>
+  <p>We want to give you all a bit more time to work on your project, so we are happy to let you know that the new deadline for submitting your final entry for the challenge is now Monday, March 23.</p>
+</blockquote>
+
+<p>So I’m confident that I’m able to submit something working by the March 23.</p>
+
+            
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/bittailor_ch" title="" target="_blank">BITtailor</a></strong><br>
+                <span class="muted">passion for the bits and bytes</span>
+                </p>
+            </address>
+
+        </footer>
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'bittailoriotchallenge'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2016
+
+        <nav>
+            <a href="http://bittailor.ch/">BITtailor</a> &middot;
+            <a href="/">Blog</a> &middot;
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+
+        <nav class="social">
+            
+            <a href="https://twitter.com/bittailor_ch" title="Follow on Twitter" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            
+            <a href="http://github.com/bittailor" title="Fork on Github" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            <a href="/feed.xml" title="RSS Feed">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x"></i>
+              </span>
+            </a>
+
+        </nav>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+</body>
+</html>

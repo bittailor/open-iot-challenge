@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <title>The first steps &mdash; BITtailor @ Eclipse Open IoT Challenge</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="stylesheet" href="/assets/prism.css">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/images/logo.jpg"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="BITtailor @ Eclipse Open IoT Challenge" />
+    <meta name="title" content="The first steps ">
+    <link rel="canonical" href="http://incorporated.sendtoinc.com/2016/01/14/oiot2-first-steps/">
+    
+    
+    <meta property="og:title" content="The first steps "/>
+    <meta property="og:url" content="http://incorporated.sendtoinc.com/2016/01/14/oiot2-first-steps/"/>
+    
+    <meta property="og:image" content="http://incorporated.sendtoinc.com/images/mountain_2.jpg"/>
+    
+    <meta property="og:image" content="http://incorporated.sendtoinc.com/images/logo.jpg"/>
+    
+
+
+
+    <meta property="og:site_name" content="BITtailor @ Eclipse Open IoT Challenge">
+
+</head>
+<body>
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+              <i class="fa fa-home fa-2x"></i>  <i class="fa fa-plug fa-rotate-45"></i> <i class="fa fa-cloud fa-2x"></i>
+              <!-- <img src="/images/logo.jpg" alt="Inc"> -->
+            </a>
+            <a href="/edition/second/">2.0</a>
+            <a href="/edition/first">1.0</a>
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+    </header>
+</section>
+
+
+<div class="article-cover">
+    <div>
+        <img src="/images/mountain_2.jpg" class="image">
+    </div>
+</div>
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="BITtailor" target="_blank">BITtailor</a></address> &mdash;
+                <time pubdate datetime="2016-14-January" title="January 14, 2016">January 14, 2016</time>
+            </div>
+            <h1 class="title">The first steps</h1>
+            <h2 class="subtitle">IoT-ing a mountain’s hut off-grid solar power system</h2>
+        </header>
+
+        <section>
+            
+<p>In this post I explore my first steps for my project:<br />
+ - GPRS connection<br />
+ - MQTT over GPRS<br />
+ - Current and Voltage sensing</p>
+
+<!-- more -->
+
+<p><strong>GPRS connection and display</strong></p>
+
+<p>The first thing I wanted to explore was the GPRS connection. I already had a <a href="http://www.seeedstudio.com/wiki/GPRS_Shield_V3.0">GPRS Shield</a> from Seeed Studio in my tinkering box for quite a while, but I have not really used it yet. I combined it with an <a href="https://www.arduino.cc/en/Main/ArduinoBoardUno">Arduino UNO</a> and a <a href="https://www.adafruit.com/products/338">Nokia 5110</a> display to start the exploration.</p>
+
+<p><img src="/images/uno_gprs_5110_v1.jpg" alt="uno_gprs_5110_v1" /></p>
+
+<p>After some try and errors with the AT commands modem interface of the GPRS Shield my <a href="https://gist.github.com/bittailor/3301175cacad32da154c">first sketch</a> connects to Cellular GSM network and displays the signal strength (RSSI).</p>
+
+<p>So I packed everything in my backpack, and since there is nearly no snow till now this winter, I just needed my hiking shoes to reach the hut and checked the signal strength at the huts solar control box.</p>
+
+<p><img src="/images/uno_gprs_5110_on_hut.jpg" alt="uno_gprs_5110_v1" /></p>
+
+<p>The display showed a strength of 9 (-95 dBm) to 10 (-93 dBm) which is just at the border from a <em>Marginal</em> to a <em>OK</em> Condition.  Therefore a data connection should work but maybe a another/better antenna could be useful.</p>
+
+<p><strong>MQTT over GPRS</strong></p>
+
+<p>So back at my desk the next thing was to use MQTT to actually send some data over Cellular GSM network. I used the Paho <a href="https://www.eclipse.org/paho/clients/c/embedded/">Embedded MQTT C/C++ Client</a> for Arduino, therefore I implemented a <a href="https://gist.github.com/bittailor/fd6ab7e75a00221e0ade">GPRSClient</a> that extends the <a href="https://www.arduino.cc/en/Reference/ClientConstructor">Arduino Client Base class</a> which represents the <em>Ethernet Interface</em> for Arduino and is used by the Paho client library. <a href="https://gist.github.com/bittailor/f97cbc529cc246d3bffe">This Sketch</a> uses the GPRSClient and the Paho client library to send some data to the Paho sandbox server.     </p>
+
+<p><img src="/images/MqttOverGprs_1.jpg" alt="MqttOverGprs_1.jpg" /> <br />
+<img src="/images/MqttOverGprs_2.jpg" alt="MqttOverGprs_2.jpg" /></p>
+
+<p><strong>Current and Voltage sensing</strong></p>
+
+<p>Next thing is to measure a current and send it, instead of the timer value. I use a <a href="https://www.adafruit.com/products/904">INA219 High Side DC Current Sensor Breakout</a> that can out of the box measure a current up to 3.2A and a Voltages up to 26V. This is fine for my first steps, where I just measure the current of the Arduino UNO and the GPRS Shield itself, but I will have to use another current sense resistor to extend the range up to 20A. </p>
+
+<p><img src="/images/current_sensor_1.jpg" alt="current_sensor_1.jpg" /></p>
+
+<p><a href="https://gist.github.com/bittailor/d19deb070040851ac40d">This Sketch</a> uses the INA219 to measure the current roughly all 100ms and then publishes all 10s the average current. An we see that the Arduino UNO and the GPRS Shield use about 150mA when connected and about 180mA when it also has to receive some MQTT messages.  </p>
+
+<p><img src="/images/current_sensor_2.jpg" alt="current_sensor_2.jpg" /><br />
+<img src="/images/current_sensor_3.jpg" alt="current_sensor_3.jpg" /></p>
+
+<p>So after this first steps I draw some conclusions on how to continue. I will write about them in the next post.</p>
+
+            
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/bittailor_ch" title="" target="_blank">BITtailor</a></strong><br>
+                <span class="muted">passion for the bits and bytes</span>
+                </p>
+            </address>
+
+        </footer>
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'bittailoriotchallenge'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2016
+
+        <nav>
+            <a href="http://bittailor.ch/">BITtailor</a> &middot;
+            <a href="/">Blog</a> &middot;
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+
+        <nav class="social">
+            
+            <a href="https://twitter.com/bittailor_ch" title="Follow on Twitter" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            
+            <a href="http://github.com/bittailor" title="Fork on Github" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            <a href="/feed.xml" title="RSS Feed">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x"></i>
+              </span>
+            </a>
+
+        </nav>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <title>Adventures in Tycho &mdash; BITtailor @ Eclipse Open IoT Challenge</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="stylesheet" href="/assets/prism.css">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/images/logo.jpg"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="BITtailor @ Eclipse Open IoT Challenge" />
+    <meta name="title" content="Adventures in Tycho ">
+    <link rel="canonical" href="http://incorporated.sendtoinc.com/2015/03/18/adventures-in-tycho/">
+    
+    
+    <meta property="og:title" content="Adventures in Tycho "/>
+    <meta property="og:url" content="http://incorporated.sendtoinc.com/2015/03/18/adventures-in-tycho/"/>
+    
+
+
+
+    <meta property="og:site_name" content="BITtailor @ Eclipse Open IoT Challenge">
+
+</head>
+<body>
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+              <i class="fa fa-home fa-2x"></i>  <i class="fa fa-plug fa-rotate-45"></i> <i class="fa fa-cloud fa-2x"></i>
+              <!-- <img src="/images/logo.jpg" alt="Inc"> -->
+            </a>
+            <a href="/edition/second/">2.0</a>
+            <a href="/edition/first">1.0</a>
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="BITtailor" target="_blank">BITtailor</a></address> &mdash;
+                <time pubdate datetime="2015-18-March" title="March 18, 2015">March 18, 2015</time>
+            </div>
+            <h1 class="title">Adventures in Tycho</h1>
+            <h2 class="subtitle">Creating a maker friendly DIY IoT home automation solution</h2>
+        </header>
+
+        <section>
+            
+<p>To build my OSGI bundels that implement the MQTT-SN gateway I went with <a href="https://eclipse.org/tycho/">Tycho</a> since I saw that Kura uses Tycho and also the <a href="https://github.com/kartben/kura-greenhouse-demo">kura-greenhouse-demo</a> uses Tycho as build system. I expected that the Tycho build system is quite similar to <em>regular</em> maven build system, but from my point of view (or lack of knowlege) Tycho is quite different than what I was used to from maven.</p>
+
+<!-- more -->
+<p>Besides compiling the sources, I expected that it would be straight forward to:</p>
+
+<ol>
+  <li>define the build, runtime and test dependencies of a bundle. Then the build system will take care of fetching and caching them from binary repositories, so that there is no need to add binaries the the source code repository.</li>
+  <li>having unit tests for a bundle which will be run by the build system.</li>
+</ol>
+
+<h3 id="lets-start-with-the-2">Lets start with the <strong>#2</strong></h3>
+<p>With Tycho it is not possible to put your unit tests under <small><tt>src/test/java</tt></small> so I searched and found that one way is to create a <a href="http://www.vogella.com/tutorials/EclipseFragmentProject/article.html">plug-in fragment</a> and use the <strong>eclipse-test-plugin</strong> as the Maven packaging. Unfortunately this did not what I was expecting for unit tests. The <strong>eclipse-test-plugin</strong> launches a complete OSGI environment, which, in my opinion, isn’t unit testing but rather integration testing. But my problem was that my bundle depends on the jdk.dio bundle which is only available on the target and not on the development machine and so the OSGI resolving failed. Therefore I could not run <strong>eclipse-test-plugin</strong> tests on my development machine. I tried various alternatives and settled with the following:</p>
+
+<p>I still create a seperate plug-in fragment but use <strong>eclipse-plugin</strong> as the Maven packaging. I put all the unit tests into the <small><tt>src/main/java</tt></small> folder of this plug-in fragment project and then add the <strong>maven-surefire-plugin</strong> to the POM of the plug-in fragment and configure the regular output directory as testClassesDirectory. You also have to add a dependency to junit 4 to the POM so that the <strong>maven-surefire-plugin</strong> knows how to launch the tests;</p>
+
+<pre><code class="language-markup">&lt;project&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;parent&gt;
+	  &lt;groupId&gt;ch.bittailor.iot&lt;/groupId&gt;
+ 	  &lt;artifactId&gt;ch.bittailor.iot.parent&lt;/artifactId&gt;
+  	&lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;relativePath&gt;../pom.xml&lt;/relativePath&gt;
+  &lt;/parent&gt;
+
+  &lt;artifactId&gt;ch.bittailor.iot.core.test&lt;/artifactId&gt;
+  &lt;packaging&gt;eclipse-plugin&lt;/packaging&gt;
+
+  &lt;build&gt;
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+        &lt;version&gt;2.18.1&lt;/version&gt;
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;id&gt;test&lt;/id&gt;
+            &lt;phase&gt;test&lt;/phase&gt;
+            &lt;configuration&gt;
+              &lt;testClassesDirectory&gt;${project.build.outputDirectory}&lt;/testClassesDirectory&gt;
+            &lt;/configuration&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;test&lt;/goal&gt;
+            &lt;/goals&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+  &lt;/build&gt;
+
+  &lt;dependencies&gt;
+  	&lt;dependency&gt;
+  		&lt;groupId&gt;junit&lt;/groupId&gt;
+  		&lt;artifactId&gt;junit&lt;/artifactId&gt;
+  		&lt;version&gt;4.12&lt;/version&gt;
+  		&lt;scope&gt;test&lt;/scope&gt;
+  	&lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;
+</code></pre>
+
+<p>This now launches my tests as simple unit tests during a <strong>mvn clean verify</strong>. So the next thing a wanted was to have <a href="http://mockito.org/">mockito</a> available as mocking framework in my unit tests. With Tycho it is not possible to just add it as test dependency to the POM since Tycho uses a target-platform to resolve all its dependencies.</p>
+
+<h3 id="back-to-1-how-to-manage-dependencies-with-tycho">Back to <strong>#1</strong>, how to manage dependencies with Tycho</h3>
+<p>I’m still struggeling with how to manage the dependencies with Tycho. As far as I understood it, Tycho uses the target platform to resolve all its dependencies. But I still could not find a way to define the the target platform for my needs (Kura bundles and mockito for testing) without adding binaries to the source code repository. I again <a href="https://www.eclipse.org/forums/index.php/t/1028830/">asked</a> the Kura discussion forum for help. The current answer state is to write a “first-time-setup” script. But since I’m running out of time I focused on the implementation of the MQTT-SN gateway. So my source code is currently not buildable out of the source code repository but needs a handcrafted (kura) target platform on the development machine.</p>
+
+<p>I recognized that also the <a href="https://github.com/kartben/kura-greenhouse-demo">kura-greenhouse-demo</a> does not build out of the source code repository since it also relies on a kura target platform already present on the development machine. So my code is in good company <i class="fa fa-smile-o"></i>.</p>
+
+<p>Nevertheless I’m still eagerly interested in a solution to manage the kura dependencies/target-platform with Tycho without adding binaries into the source code repository. So that my maven experience of just doing <strong>git clone &amp;&amp; mvn clean verify</strong> also holds with Tycho. So please comment here or in the Kura discussion forum <a href="https://www.eclipse.org/forums/index.php/t/1028830/">topic</a> if you have some insights.</p>
+
+            
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/bittailor_ch" title="" target="_blank">BITtailor</a></strong><br>
+                <span class="muted">passion for the bits and bytes</span>
+                </p>
+            </address>
+
+        </footer>
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'bittailoriotchallenge'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2016
+
+        <nav>
+            <a href="http://bittailor.ch/">BITtailor</a> &middot;
+            <a href="/">Blog</a> &middot;
+            <a href="http://iot.eclipse.org/open-iot-challenge/">@Eclipse</a>
+            <a href="http://openiotchallenge.tumblr.com">@tumblr</a>
+        </nav>
+
+        <nav class="social">
+            
+            <a href="https://twitter.com/bittailor_ch" title="Follow on Twitter" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            
+            <a href="http://github.com/bittailor" title="Fork on Github" target="_blank">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x"></i>
+              </span>
+            </a>
+            
+            <a href="/feed.xml" title="RSS Feed">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x"></i>
+              </span>
+            </a>
+
+        </nav>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+</body>
+</html>
